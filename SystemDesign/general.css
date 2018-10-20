@@ -1,0 +1,72 @@
+.caption {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.navbar {
+  background-color: #52258c;
+}
+
+.best {
+  text-align: center;
+  color: #52258c;
+  font-weight: bold;
+}
+
+body {
+  background-size: cover;
+  font-family: 'Oswald', sans-serif !important;
+}
+
+.jumbotron {
+  background: rgba(239, 241, 244, 0.8) !important;
+}
+
+background{
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+h1 {
+  font-size: 60px;
+  text-align: center;
+  color: #52258c !important;
+  font-weight: bold !important;
+  font-family: 'Oswald', sans-serif !important;
+}
+
+h3 {
+  font-size: 40px;
+  text-align: center;
+  font-family: 'Oswald', sans-serif;
+}
+
+p {
+  font-size: 20px;
+  font-weight: normal;
+  font-family: 'Oswald', sans-serif;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+.hometext {
+  font-size: 24px;
+}
+
+#knowledge {
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: underline;
+  text-align: center;
+}
+
+#news {
+  font-size: 24px;
+  font-weight: bold;
+  text-decoration: underline;
+  text-align: center;
+  border: 3px solid black;
+}
