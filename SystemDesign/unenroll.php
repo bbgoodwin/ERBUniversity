@@ -1,7 +1,7 @@
 <?php
 $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
 session_start();
-if (!isset($_SESSION["email"])) {
+if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
     header("location:login.php?action=login");
 }
 if (isset($_POST["unenroll"])) {

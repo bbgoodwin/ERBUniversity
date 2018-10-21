@@ -12,16 +12,17 @@ if (isset($_POST["login"])) {
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_array($result)) {
                 $_SESSION["userId"] = $row["userId"];
-                if (password_verify($password, $row["password"]) && $row["userType"]=='4') {
+                $_SESSION["userType"] = $row["usertype"];
+                if (password_verify($password, $row["password"]) && $row["usertype"]=='4') {
                     $_SESSION["email"] = $email;
                     header("location:student.php");
-                } elseif (password_verify($password, $row["password"]) && $row["userType"]=='3') {
+                } elseif (password_verify($password, $row["password"]) && $row["usertype"]=='3') {
                     $_SESSION["email"] = $email;
                     header("location:faculty.php");
-                } elseif (password_verify($password, $row["password"]) && $row["userType"]=='2') {
+                } elseif (password_verify($password, $row["password"]) && $row["usertype"]=='2') {
                     $_SESSION["email"] = $email;
                     header("location:research.php");
-                } elseif (password_verify($password, $row["password"]) && $row["userType"]=='1') {
+                } elseif (password_verify($password, $row["password"]) && $row["usertype"]=='1') {
                     $_SESSION["email"] = $email;
                     header("location:admin.php");
                 } else {

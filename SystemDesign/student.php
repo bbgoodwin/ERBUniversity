@@ -1,6 +1,6 @@
 <?php
  session_start();
- if (!isset($_SESSION["email"])) {
+ if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
      header("location:login.php?action=login");
  }
  ?>
@@ -29,6 +29,9 @@
               <li class="nav-item">
                 <a class="nav-link" href="unenroll.php">Remove Class</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="viewGrades.php">View Grades</a>
+              </li>
             </ul>
             <form class="form-inline" action="logout.php">
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
@@ -38,17 +41,17 @@
         <div class="container">
           <div class="jumbotron">
                 <?php echo '<h1>Welcome '.$_SESSION["email"].'</h1><br>'; ?>
-                <h3>Student Detailed Schedule</h3>
-                <table class="table table-striped">
+                <h3>Student Detailed Schedule</h3> <br>
+                <div>
+                <table class="table table-striped table-dark">
                   <tr>
                     <th scope="col">CRN#</th>
+                    <th scope="col">Course Name</th>
+                    <th scope="col">Teacher</th>
+                    <th scope="col">Building</th>
+                    <th scope="col">Room#</th>
+                    <th scope="col">Time</th>
                     <th scope="col">Semester</th>
-                    <th scope="col">Faculty ID</th>
-                    <th scope="col">Room ID</th>
-                    <th scope="col">Period</th>
-                    <th scope="col">Day</th>
-                    <th scope="col">Semester</th>
-                    <th scope="col">Year</th>
                   </tr>
                   <tbody>
                 <?php
@@ -60,18 +63,25 @@
                       while ($row = mysqli_fetch_array($result)) {
                           $crn=$row['crn'];
                           $query2="SELECT * FROM class WHERE crn=$crn";
-                          echo "<tr><td>" . $row['crn'] . "</td><td>" . $row['semester'] . "</td>";
+                          echo "<tr><td>" . $row['crn'] . "</td>";
                           $result2=mysqli_query($connect, $query2);
                           while ($row2 = mysqli_fetch_array($result2)) {
-                              echo "<td>" . $row2['facId'] . "</td><td>" . $row2['roomId'] . "</td><td>" . $row2['period'] . "</td><td>" . $row2['day'] . "</td><td>" . $row2['semester'] . "</td><td>" . $row2['year'] . "</td></tr>";
+                              $facultyid=$row2['facId'];
+                              $getFacName="SELECT * FROM user WHERE userId=$facultyid";
+                              $result4=mysqli_query($connect, $getFacName);
+                              $row4=mysqli_fetch_array($result4);
+                              $timeslotid=$row2['timeslotid'];
+                              $getTimeSlot="SELECT * FROM timeslot WHERE timeslotid=$timeslotid";
+                              $result3=mysqli_query($connect, $getTimeSlot);
+                              $row3 = mysqli_fetch_array($result3);
+                              echo "<td>" . $row2['courseName'] . "</td><td>" . $row4['fname'] . " " . $row4['lname'] . "</td><td>" . $row2['buildingname'] . "</td><td>" . $row2['roomNumber'] . "</td><td>" . $row3['dayId'] . " " . $row3['periodId'] . "</td><td>" . $row2['semeYear'] . "</td></tr>";
                           }
                       }
-                  } else {
-                      echo '<script>alert("Wrong User Details")</script>';
                   }
                 ?>
               </tbody>
             </table>
+            </div>
          </div>
        </div>
       </body>

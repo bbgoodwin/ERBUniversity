@@ -1,7 +1,13 @@
+<?php
+ session_start();
+ if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
+     header("location:login.php?action=login");
+ }
+ ?>
  <!DOCTYPE html>
  <html>
       <head>
-           <title>Student Page</title>
+           <title>Grade Page</title>
            <link rel="stylesheet" href="general.css">
            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
            <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
@@ -17,13 +23,13 @@
               <li class="nav-item">
                 <a class="nav-link" href="student.php">Student Homepage</a>
               </li>
-              <li class="nav-item active">
+              <li class="nav-item">
                 <a class="nav-link" href="enroll.php">Add Class<span class="sr-only">(current)</span></a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="unenroll.php">Remove Class</a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item active">
                 <a class="nav-link" href="viewGrades.php">View Grades</a>
               </li>
             </ul>
@@ -34,47 +40,32 @@
         </nav>
         <div class="container">
           <div class="jumbotron">
-            <div align="center">
-             <h3>Enroll in Class</h3>
-             <br />
-             <form method="post">
-                  <label>Enter CRN#</label>
-                  <div style="width:100px;">
-                  <input type="text" name="CRN#" class="form-control" />
-                  </div>
-                  <br />
-                  <input type="submit" name="enroll" value="Enroll" class="btn btn-info" />
-                  <br /> <br>
-                  <?php
-                  error_reporting(0);
+                <h3>Your Grades</h3> <br>
+                <div>
+                <table class="table table-striped table-dark">
+                  <tr>
+                    <th scope="col">CRN#</th>
+                    <th scope="col">Course Name</th>
+                    <th scope="col">Semester</th>
+                    <th scope="col">Grade</th>
+                  </tr>
+                  <tbody>
+                <?php
                   $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
-                  session_start();
-                  if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
-                      header("location:login.php?action=login");
-                  }
-                  if (isset($_POST["enroll"])) {
-                      $stuId = $_SESSION["userId"];
-                      $CRN = mysqli_real_escape_string($connect, $_POST["CRN#"]);
-                      $getSem = "SELECT * FROM class WHERE crn=$CRN";
-                      $getSemResult = mysqli_query($connect, $getSem);
-                      if (mysqli_num_rows($getSemResult) > 0) {
-                        $row = mysqli_fetch_array($getSemResult);
-                        $semester=$row['semeYear'];
-                      }
-                      $query = "INSERT INTO enrollment(stuId,crn, semester)
-                            VALUES ('$stuId','$CRN','$semester');";
-
-                      if (mysqli_query($connect, $query)) {
-                          echo "Class Added to Schedule";
-                      } else {
-                          echo "Incorrect CRN#";
+                  $stuId = $_SESSION["userId"];
+                  $query = "SELECT * FROM history WHERE stuId = '$stuId'";
+                  $result = mysqli_query($connect, $query);
+                  if (mysqli_num_rows($result) > 0) {
+                      while ($row = mysqli_fetch_array($result)) {
+                          echo "<tr><td>" . $row['crn'] . "</td><td>" . $row['courseName'] . "</td><td>" . $row['semester'] . "</td><td>" . $row['grade'] . "</td></tr>";
                       }
                   }
-                  ?>
-             </form>
-             </div>
-           </div>
-        </div>
+                ?>
+              </tbody>
+            </table>
+            </div>
+         </div>
+       </div>
       </body>
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
