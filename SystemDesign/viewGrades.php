@@ -58,10 +58,50 @@
                   $stuId = $_SESSION["userId"];
                   $query = "SELECT * FROM history WHERE stuId = '$stuId'";
                   $result = mysqli_query($connect, $query);
+                  $gpa=[];
                   if (mysqli_num_rows($result) > 0) {
                       while ($row = mysqli_fetch_array($result)) {
                           echo "<tr><td>" . $row['crn'] . "</td><td>" . $row['courseName'] . "</td><td>" . $row['semester'] . "</td><td>" . $row['grade'] . "</td></tr>";
+                          if($row['grade']=='A'){
+                            array_push($gpa,4.0);
+                          }
+                          elseif($row['grade']=='A-'){
+                            array_push($gpa,3.67);
+                          }
+                          elseif($row['grade']=='B+'){
+                            array_push($gpa,3.33);
+                          }
+                          elseif($row['grade']=='B'){
+                            array_push($gpa,3.00);
+                          }
+                          elseif($row['grade']=='B-'){
+                            array_push($gpa,2.67);
+                          }
+                          elseif($row['grade']=='C+'){
+                            array_push($gpa,2.33);
+                          }
+                          elseif($row['grade']=='C'){
+                            array_push($gpa,2.00);
+                          }
+                          elseif($row['grade']=='D+'){
+                            array_push($gpa,1.33);
+                          }
+                          elseif($row['grade']=='D'){
+                            array_push($gpa,1.00);
+                          }
+                          elseif($row['grade']=='D-'){
+                            array_push($gpa,0.67);
+                          }
+                          elseif($row['grade']=='F'){
+                            array_push($gpa,0);
+                          }
                       }
+                  }
+                  if(count($gpa)){
+                    $gpa = array_filter($gpa);
+                    $gpaAvg = array_sum($gpa)/count($gpa);
+                    $gpaAvgF = number_format((float)$gpaAvg, 2, '.', '');
+                    echo "<h4> GPA: " . $gpaAvgF . "</h4>";
                   }
                 ?>
               </tbody>

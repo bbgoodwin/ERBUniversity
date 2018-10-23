@@ -44,8 +44,23 @@
         <div class="row">
           <div class="col-2">
             <div class="jumbotron">
+              <p id=knowledge> Semester </p>
               <select name="department">
-                
+                <option value="f18">Fall 2018</option>
+                <option value="s19">Spring 2019</option>
+                <option value="f19">Fall 2019</option>
+              </select> <br> <br>
+              <p id=knowledge> Department </p>
+              <select name="department">
+                <option value="*">All</option>
+                <option value="CS">Computer Science</option>
+                <option value="Math">Math</option>
+                <option value="Fitness">Fitness</option>
+                <option value="Science">Science</option>
+                <option value="History">History</option>
+                <option value="Psychology">Pyschology</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Art">Art</option>
               </select>
             </div>
            </div>

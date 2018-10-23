@@ -55,9 +55,16 @@
                   if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
                       header("location:login.php?action=login");
                   }
+
                   if (isset($_POST["enroll"])) {
                       $stuId = $_SESSION["userId"];
                       $CRN = mysqli_real_escape_string($connect, $_POST["CRN#"]);
+                      $errorCheck="SELECT * FROM enrollment WHERE crn=$CRN AND stuId=$stuId";
+                      $errorCheckResult=mysqli_query($connect,$errorCheck);
+                      if(mysqli_num_rows($errorCheckResult) > 0){
+                        echo "Already Enrolled in this class.";
+                        return;
+                      }
                       $getSem = "SELECT * FROM class WHERE crn=$CRN";
                       $getSemResult = mysqli_query($connect, $getSem);
                       if (mysqli_num_rows($getSemResult) > 0) {
