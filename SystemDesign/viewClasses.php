@@ -45,23 +45,25 @@
           <div class="col-2">
             <div class="jumbotron">
               <p id=knowledge> Semester </p>
-              <select name="department">
+              <select name="semester">
                 <option value="f18">Fall 2018</option>
                 <option value="s19">Spring 2019</option>
                 <option value="f19">Fall 2019</option>
               </select> <br> <br>
               <p id=knowledge> Department </p>
+              <form class="form-inline" method="post">
               <select name="department">
-                <option value="*">All</option>
                 <option value="CS">Computer Science</option>
                 <option value="Math">Math</option>
-                <option value="Fitness">Fitness</option>
+                <option value="GYM">Fitness</option>
                 <option value="Science">Science</option>
                 <option value="History">History</option>
                 <option value="Psychology">Pyschology</option>
                 <option value="Chemistry">Chemistry</option>
                 <option value="Art">Art</option>
-              </select>
+              </select> <br> <br>
+                <input type="submit" name="search" value="Filter"></input>
+              </form> <br> <br>
             </div>
            </div>
           <div class="col-8">
@@ -80,10 +82,16 @@
                             </tr>
                             <tbody>
                           <?php
-                            $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
+                          $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
+                          if (isset($_POST['search'])) {
+                              $selected=$_POST['department'];
+                              $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selected'";
+                              $result=filterTable($query);
+                          } else {
+                              $query = "SELECT * FROM class";
+                              $result=filterTable($query);
+                          }
                             $stuId = $_SESSION["userId"];
-                            $query = "SELECT * FROM class";
-                            $result = mysqli_query($connect, $query);
                             if (mysqli_num_rows($result) > 0) {
                                 while ($row = mysqli_fetch_array($result)) {
                                     $crn=$row['crn'];
@@ -103,13 +111,19 @@
                                     }
                                 }
                             }
+                            function filterTable($query)
+                            {
+                                $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
+                                $result = mysqli_query($connect, $query) or die(mysqli_error($connect));
+                                return $result;
+                            }
                           ?>
                         </tbody>
                       </table>
                    </div>
                  </div>
                </div>
-               <div class="col-2">col-4</div>
+               <div class="col-2"></div>
         </div>
       </body>
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
