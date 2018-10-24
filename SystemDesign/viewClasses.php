@@ -1,7 +1,7 @@
 <?php
  session_start();
  if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
-     header("location:login.php?action=login");
+     include("logout.php");
  }
  ?>
  <!DOCTYPE html>
@@ -56,11 +56,12 @@
                 <option value="CS">Computer Science</option>
                 <option value="Math">Math</option>
                 <option value="GYM">Fitness</option>
-                <option value="Science">Science</option>
-                <option value="History">History</option>
-                <option value="Psychology">Pyschology</option>
-                <option value="Chemistry">Chemistry</option>
-                <option value="Art">Art</option>
+                <option value="SCI">Science</option>
+                <option value="HIST">History</option>
+                <option value="PSY">Pyschology</option>
+                <option value="CHEM">Chemistry</option>
+                <option value="ART">Art</option>
+                <option value="PHY">Physics</option>
               </select> <br> <br>
                 <input type="submit" name="search" value="Filter"></input>
               </form> <br> <br>

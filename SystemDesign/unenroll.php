@@ -2,30 +2,49 @@
 $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
 session_start();
 if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
-    header("location:login.php?action=login");
-}
-if (isset($_POST["unenroll"])) {
-    $CRN = mysqli_real_escape_string($connect, $_POST["CRN#"]);
-    $userid=$_SESSION["userId"];
-    $query = "DELETE FROM enrollment WHERE stuId=$userid AND crn=$CRN";
-    if (mysqli_query($connect, $query)) {
-        echo "Unenrollment successfull";
-    } else {
-        echo "Error: " . $query . "<br>" . mysqli_error($connect);
-    }
+    include("logout.php");
 }
 ?>
 <!DOCTYPE html>
 <html>
      <head>
           <title>ERBUniveristy Unenroll Page</title>
-          <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
-          <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+          <link rel="stylesheet" href="general.css">
+          <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+          <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
      </head>
-     <body>
-          <br /><br />
-          <div class="container" style="width:500px;">
+     <body background="studentHomepage.jpg">
+       <nav class="navbar navbar-expand-lg navbar-dark">
+         <a class="navbar-brand" href="student.php"> <img src="logo.png" alt="" height="60" width="60"> </a>
+         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+           <span class="navbar-toggler-icon"></span>
+         </button>
+         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+           <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+             <li class="nav-item">
+               <a class="nav-link" href="student.php">Student Homepage</a>
+             </li>
+             <li class="nav-item">
+               <a class="nav-link" href="enroll.php">Add Class<span class="sr-only">(current)</span></a>
+             </li>
+             <li class="nav-item active">
+               <a class="nav-link" href="unenroll.php">Remove Class</a>
+             </li>
+             <li class="nav-item">
+               <a class="nav-link" href="viewGrades.php">View Grades</a>
+             </li>
+             <li class="nav-item">
+               <a class="nav-link" href="viewClasses.php">View Classes</a>
+             </li>
+           </ul>
+           <form class="form-inline" action="logout.php">
+             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
+           </form>
+         </div>
+       </nav>
+       <div class="container">
+         <div class="jumbotron">
+           <div align="center">
                <h3 align="center">Unenroll From a Class</h3>
                <br />
                <form method="post">
@@ -34,10 +53,30 @@ if (isset($_POST["unenroll"])) {
                     <br />
                     <input type="submit" name="unenroll" value="Unenroll" class="btn btn-info" />
                     <br />
-               </form>
-               <form class="form-inline" action="student.php">
-                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Back</button>
-               </form>
-          </div>
+               </form> <br>
+               <?php
+               if (isset($_POST["unenroll"])) {
+                   $CRN = mysqli_real_escape_string($connect, $_POST["CRN#"]);
+                   $userid=$_SESSION["userId"];
+                   $check= "SELECT * FROM enrollment WHERE stuId=$userid AND crn=$CRN";
+                   $result=mysqli_query($connect, $check);
+                   $query = "DELETE FROM enrollment WHERE stuId=$userid AND crn=$CRN";
+                   if (mysqli_num_rows($result) > 0) {
+                       if (mysqli_query($connect, $query)) {
+                           echo "Unenrollment successfull";
+                       } else {
+                           echo "Incorrect CRN#";
+                       }
+                   } else {
+                       echo "Incorrect CRN#";
+                   }
+               }
+               ?>
+             </div>
+           </div>
+         </div>
      </body>
+     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 </html>

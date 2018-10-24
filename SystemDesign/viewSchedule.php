@@ -1,3 +1,9 @@
+<?php
+ session_start();
+ if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
+     include("logout.php");
+ }
+ ?>
 <!DOCTYPE html>
 <html>
 
@@ -25,10 +31,6 @@
 
 <?php
 $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
-session_start();
-if (!isset($_SESSION["email"])) {
-    header("location:login.php?action=login");
-}
           $stuId = $_SESSION["userId"];
           $query = "SELECT * FROM enrollment WHERE stuId = '$stuId'";
           $result = mysqli_query($connect, $query);

@@ -1,7 +1,7 @@
 <?php
  session_start();
  if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
-     header("location:login.php?action=login");
+     include("logout.php");
  }
  ?>
  <!DOCTYPE html>

@@ -1,3 +1,9 @@
+<?php
+ session_start();
+ if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
+     include("logout.php");
+ }
+ ?>
  <!DOCTYPE html>
  <html>
       <head>
@@ -51,11 +57,6 @@
                   <?php
                   error_reporting(0);
                   $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
-                  session_start();
-                  if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
-                      header("location:login.php?action=login");
-                  }
-
                   if (isset($_POST["enroll"])) {
                       $stuId = $_SESSION["userId"];
                       $CRN = mysqli_real_escape_string($connect, $_POST["CRN#"]);
