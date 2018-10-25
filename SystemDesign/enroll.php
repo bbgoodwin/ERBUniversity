@@ -61,9 +61,15 @@
                       $stuId = $_SESSION["userId"];
                       $CRN = mysqli_real_escape_string($connect, $_POST["CRN#"]);
                       $errorCheck="SELECT * FROM enrollment WHERE crn=$CRN AND stuId=$stuId";
+                      $errorCheck2="SELECT * FROM enrollment WHERE stuId=$stuId";
                       $errorCheckResult=mysqli_query($connect,$errorCheck);
+                      $errorCheck2Result=mysqli_query($connect,$errorCheck2);
                       if(mysqli_num_rows($errorCheckResult) > 0){
                         echo "Already Enrolled in this class.";
+                        return;
+                      }
+                      elseif(mysqli_num_rows($errorCheck2Result) > 3){
+                        echo "Max Credits Reached.";
                         return;
                       }
                       $getSem = "SELECT * FROM class WHERE crn=$CRN";

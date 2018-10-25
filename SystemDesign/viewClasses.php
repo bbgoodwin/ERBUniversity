@@ -45,11 +45,13 @@
           <div class="col-2">
             <div class="jumbotron">
               <p id=knowledge> Semester </p>
+              <form class="form-inline" method="post">
               <select name="semester">
-                <option value="f18">Fall 2018</option>
-                <option value="s19">Spring 2019</option>
-                <option value="f19">Fall 2019</option>
-              </select> <br> <br>
+                <option value="Spring 2019">Spring 2019</option>
+                <option value="Fall 2019">Fall 2019</option>
+              </select> <br /> <br /> 
+              <input type="submit" name="searchS" value="Filter"></input>
+              </form>
               <p id=knowledge> Department </p>
               <form class="form-inline" method="post">
               <select name="department">
@@ -63,7 +65,7 @@
                 <option value="ART">Art</option>
                 <option value="PHY">Physics</option>
               </select> <br> <br>
-                <input type="submit" name="search" value="Filter"></input>
+                <input type="submit" name="searchD" value="Filter"></input>
               </form> <br> <br>
             </div>
            </div>
@@ -74,6 +76,7 @@
                           <table class="table table-striped table-dark">
                             <tr>
                               <th scope="col">CRN#</th>
+                              <th scope="col">Section</th>
                               <th scope="col">Course Name</th>
                               <th scope="col">Teacher</th>
                               <th scope="col">Building</th>
@@ -84,7 +87,12 @@
                             <tbody>
                           <?php
                           $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
-                          if (isset($_POST['search'])) {
+                          if (isset($_POST['searchS'])) {
+                              $selected=$_POST['semester'];
+                              $query = "SELECT * FROM class WHERE semeYear='$selected'";
+                              $result=filterTable($query);
+                          }
+                          elseif (isset($_POST['searchD'])) {
                               $selected=$_POST['department'];
                               $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selected'";
                               $result=filterTable($query);
@@ -108,7 +116,7 @@
                                         $getTimeSlot="SELECT * FROM timeslot WHERE timeslotid=$timeslotid";
                                         $result3=mysqli_query($connect, $getTimeSlot);
                                         $row3 = mysqli_fetch_array($result3);
-                                        echo "<td>" . $row2['courseName'] . "</td><td>" . $row4['fname'] . " " . $row4['lname'] . "</td><td>" . $row2['buildingname'] . "</td><td>" . $row2['roomNumber'] . "</td><td>" . $row3['dayId'] . " " . $row3['periodId'] . "</td><td>" . $row2['semeYear'] . "</td></tr>";
+                                        echo "<td>" . $row2['section'] . "</td><td>" . $row2['courseName'] . "</td><td>" . $row4['fname'] . " " . $row4['lname'] . "</td><td>" . $row2['buildingname'] . "</td><td>" . $row2['roomNumber'] . "</td><td>" . $row3['dayId'] . " " . $row3['periodId'] . "</td><td>" . $row2['semeYear'] . "</td></tr>";
                                     }
                                 }
                             }

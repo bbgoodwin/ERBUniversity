@@ -73,9 +73,6 @@ if (isset($_POST["login"])) {
            <form class="form-inline" action="login.php">
              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Login</button>
            </form>
-           <form class="form-inline" action="register.php">
-             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Register</button>
-           </form>
          </div>
        </nav>
           <br /><br />

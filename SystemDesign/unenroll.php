@@ -49,7 +49,9 @@ if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
                <br />
                <form method="post">
                     <label>Enter CRN#</label>
+                    <div style="width:100px;">
                     <input type="text" name="CRN#" class="form-control" />
+                  </div>
                     <br />
                     <input type="submit" name="unenroll" value="Unenroll" class="btn btn-info" />
                     <br />

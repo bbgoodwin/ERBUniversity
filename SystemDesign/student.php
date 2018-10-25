@@ -49,6 +49,7 @@
                 <table class="table table-striped table-dark">
                   <tr>
                     <th scope="col">CRN#</th>
+                    <th scope="col">Section</th>
                     <th scope="col">Course Name</th>
                     <th scope="col">Teacher</th>
                     <th scope="col">Building</th>
@@ -77,7 +78,7 @@
                               $getTimeSlot="SELECT * FROM timeslot WHERE timeslotid=$timeslotid";
                               $result3=mysqli_query($connect, $getTimeSlot);
                               $row3 = mysqli_fetch_array($result3);
-                              echo "<td>" . $row2['courseName'] . "</td><td>" . $row4['fname'] . " " . $row4['lname'] . "</td><td>" . $row2['buildingname'] . "</td><td>" . $row2['roomNumber'] . "</td><td>" . $row3['dayId'] . " " . $row3['periodId'] . "</td><td>" . $row2['semeYear'] . "</td></tr>";
+                              echo "<td>" .  $row2['section'] . "</td><td>" . $row2['courseName'] . "</td><td>" . $row4['fname'] . " " . $row4['lname'] . "</td><td>" . $row2['buildingname'] . "</td><td>" . $row2['roomNumber'] . "</td><td>" . $row3['dayId'] . " " . $row3['periodId'] . "</td><td>" . $row2['semeYear'] . "</td></tr>";
                           }
                       }
                   }
