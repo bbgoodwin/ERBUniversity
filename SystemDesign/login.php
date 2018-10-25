@@ -7,7 +7,7 @@ if (isset($_POST["login"])) {
     } else {
         $email = mysqli_real_escape_string($connect, $_POST["email"]);
         $password = mysqli_real_escape_string($connect, $_POST["password"]);
-        $query = "SELECT * FROM user WHERE email = '$email'";
+        $query = "SELECT * FROM login WHERE email = '$email'";
         $result = mysqli_query($connect, $query);
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_array($result)) {
