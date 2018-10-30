@@ -24,16 +24,13 @@
                 <a class="nav-link" href="student.php">Student Homepage</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="enroll.php">Add Class<span class="sr-only">(current)</span></a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="unenroll.php">Remove Class</a>
+                <a class="nav-link" href="unenroll.php">Unenroll</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="viewGrades.php">View Grades</a>
               </li>
               <li class="nav-item active">
-                <a class="nav-link" href="viewClasses.php">View Classes</a>
+                <a class="nav-link" href="viewClasses.php">View Classes/Enroll in Class</a>
               </li>
             </ul>
             <form class="form-inline" action="logout.php">
@@ -47,14 +44,35 @@
               <p id=knowledge> Semester </p>
               <form class="form-inline" method="post">
               <select name="semester">
+                <option value="ALL">ALL</option>
                 <option value="Spring 2019">Spring 2019</option>
                 <option value="Fall 2019">Fall 2019</option>
-              </select> <br /> <br /> 
-              <input type="submit" name="searchS" value="Filter"></input>
-              </form>
+              </select> <br /> <br />
+              <p id=knowledge> Time-Slot </p>
+              <select name="timeslot">
+                <option value="ALL">ALL</option>
+                <option value="1">MW 8:00am-9:50am</option>
+                <option value="2">MW 11:00am-12:50pm</option>
+                <option value="3">MW 1:00pm-2:50pm</option>
+                <option value="4">MW 3:00pm-4:50pm</option>
+                <option value="5">MW 5:00pm-6:50pm</option>
+                <option value="6">MW 7:00pm-8:50pm</option>
+                <option value="7">TR 8:00am-9:50am</option>
+                <option value="8">TR 11:00am-12:50pm</option>
+                <option value="9">TR 1:00pm-2:50pm</option>
+                <option value="10">TR 3:00pm-4:50pm</option>
+                <option value="11">TR 5:00pm-6:50pm</option>
+                <option value="12">TR 7:00pm-8:50pm</option>
+                <option value="13">F 8:00am-9:50am</option>
+                <option value="14">F 11:00am-12:50pm</option>
+                <option value="15">F 1:00pm-2:50pm</option>
+                <option value="16">F 3:00pm-4:50pm</option>
+                <option value="17">F 5:00pm-6:50pm</option>
+                <option value="18">F 7:00pm-8:50pm</option>
+              </select> <br /> <br />
               <p id=knowledge> Department </p>
-              <form class="form-inline" method="post">
               <select name="department">
+                <option value="ALL">ALL</option>
                 <option value="CS">Computer Science</option>
                 <option value="Math">Math</option>
                 <option value="GYM">Fitness</option>
@@ -65,7 +83,7 @@
                 <option value="ART">Art</option>
                 <option value="PHY">Physics</option>
               </select> <br> <br>
-                <input type="submit" name="searchD" value="Filter"></input>
+                <input type="submit" name="search" value="Filter"></input>
               </form> <br> <br>
             </div>
            </div>
@@ -87,9 +105,32 @@
                             <tbody>
                           <?php
                           $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
-                          if (isset($_POST['searchS'])) {
-                              $selected=$_POST['semester'];
-                              $query = "SELECT * FROM class WHERE semeYear='$selected'";
+                          if (isset($_POST['search'])) {
+                              $selectedSem=$_POST['semester'];
+                              $selectedDep=$_POST['department'];
+                              $selectedTim=$_POST['timeslot'];
+                              if($selectedSem!='ALL' && $selectedDep!='ALL' && $selectedTim!='ALL'){
+                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND semeYear='$selectedSem' AND timeslotid='$selectedTim'";
+                              }
+                              elseif($selectedSem!='ALL' && $selectedDep!='ALL'){
+                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND semeYear='$selectedSem'";
+                              }
+                              elseif($selectedSem!='ALL' && $selectedTim!='ALL'){
+                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE semeYear='$selectedSem' AND timeslotid='$selectedTim'";
+                              }
+                              elseif($selectedDep!='ALL' && $selectedTim!='ALL'){
+                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND timeslotid='$selectedTim'";
+                              }
+                              elseif($selectedSem!='ALL'){
+                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE semeYear='$selectedSem'";
+                              }
+                              elseif($selectedDep!='ALL'){
+                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep'";
+                              }
+                              elseif($selectedTim!='ALL'){
+                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE timeslotid='$selectedTim'";
+                              }
+
                               $result=filterTable($query);
                           }
                           elseif (isset($_POST['searchD'])) {
@@ -130,7 +171,70 @@
                         </tbody>
                       </table>
                    </div>
+                   <div align="center">
+                   <form method="post" >
+                     <h3>Enroll in Class</h3>
+                        <label>Enter CRN#</label>
+                        <div style="width:100px;">
+                        <input type="text" name="CRN#" class="form-control" />
+                        </div>
+                        <br />
+                        <input type="submit" name="enroll" value="Enroll" class="btn btn-info" />
+                        <br /> <br>
+                        <?php
+                        error_reporting(0);
+                        $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
+                        if (isset($_POST["enroll"])) {
+                            $stuId = $_SESSION["userId"];
+                            $CRN = mysqli_real_escape_string($connect, $_POST["CRN#"]);
+                            $errorCheck="SELECT * FROM enrollment WHERE crn=$CRN AND stuId=$stuId";
+                            $errorCheck2="SELECT * FROM enrollment WHERE stuId=$stuId";
+                            $holdCheck="SELECT * FROM holds WHERE stuId=$stuId";
+                            $errorCheckResult=mysqli_query($connect,$errorCheck);
+                            $errorCheck2Result=mysqli_query($connect,$errorCheck2);
+                            $holdCheckResult=mysqli_query($connect,$holdCheck);
+                            if(mysqli_num_rows($errorCheckResult) > 0){
+                              echo "Already Enrolled in this class.";
+                              return;
+                            }
+                            elseif(mysqli_num_rows($holdCheckResult)>0){
+                              $row=mysqli_fetch_array($holdCheckResult);
+                              if($row['holdType']==1){
+                                echo 'Financial Hold Placed on Account. Please Check Your Holds.';
+                                return;
+                              }
+                              elseif($row['holdType']==2){
+                                echo 'Academic Hold Placed on Account. Please Check Your Holds.';
+                                return;
+                              }
+                              elseif($row['holdType']==3){
+                                echo 'Diciplinary Hold Placed on Account. Please Check Your Holds.';
+                                return;
+                              }
+                            }
+                            elseif(mysqli_num_rows($errorCheck2Result) > 3){
+                              echo "Max Credits Reached.";
+                              return;
+                            }
+                            $getSem = "SELECT * FROM class WHERE crn=$CRN";
+                            $getSemResult = mysqli_query($connect, $getSem);
+                            if (mysqli_num_rows($getSemResult) > 0) {
+                              $row = mysqli_fetch_array($getSemResult);
+                              $semester=$row['semeYear'];
+                            }
+                            $query = "INSERT INTO enrollment(stuId,crn, semester)
+                                  VALUES ('$stuId','$CRN','$semester');";
+
+                            if (mysqli_query($connect, $query)) {
+                                echo "Class Added to Schedule";
+                            } else {
+                                echo "Incorrect CRN#";
+                            }
+                        }
+                        ?>
+                   </form>
                  </div>
+               </div>
                </div>
                <div class="col-2"></div>
         </div>

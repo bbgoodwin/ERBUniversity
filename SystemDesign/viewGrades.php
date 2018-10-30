@@ -24,16 +24,13 @@
                 <a class="nav-link" href="student.php">Student Homepage</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="enroll.php">Add Class<span class="sr-only">(current)</span></a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="unenroll.php">Remove Class</a>
+                <a class="nav-link" href="unenroll.php">Unenroll</a>
               </li>
               <li class="nav-item active">
                 <a class="nav-link" href="viewGrades.php">View Grades</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="viewClasses.php">View Classes</a>
+                <a class="nav-link" href="viewClasses.php">View Classes/Enroll in Class</a>
               </li>
             </ul>
             <form class="form-inline" action="logout.php">
@@ -56,7 +53,7 @@
                 <?php
                   $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
                   $stuId = $_SESSION["userId"];
-                  $query = "SELECT * FROM history WHERE stuId = '$stuId'";
+                  $query = "SELECT * FROM history WHERE stuId = '$stuId' ORDER BY semester DESC";
                   $result = mysqli_query($connect, $query);
                   $gpa=[];
                   if (mysqli_num_rows($result) > 0) {

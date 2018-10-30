@@ -24,17 +24,14 @@ if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
              <li class="nav-item">
                <a class="nav-link" href="student.php">Student Homepage</a>
              </li>
-             <li class="nav-item">
-               <a class="nav-link" href="enroll.php">Add Class<span class="sr-only">(current)</span></a>
-             </li>
              <li class="nav-item active">
-               <a class="nav-link" href="unenroll.php">Remove Class</a>
+               <a class="nav-link" href="unenroll.php">Unenroll</a>
              </li>
              <li class="nav-item">
                <a class="nav-link" href="viewGrades.php">View Grades</a>
              </li>
              <li class="nav-item">
-               <a class="nav-link" href="viewClasses.php">View Classes</a>
+               <a class="nav-link" href="viewClasses.php">View Classes/Enroll in Class</a>
              </li>
            </ul>
            <form class="form-inline" action="logout.php">
