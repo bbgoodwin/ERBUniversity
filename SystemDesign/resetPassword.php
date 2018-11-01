@@ -1,40 +1,3 @@
-<?php
-$connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
-session_start();
-if (isset($_POST["login"])) {
-    if (empty($_POST["email"]) || empty($_POST["password"])) {
-        echo '<script>alert("Both Fields are required")</script>';
-    } else {
-        $email = mysqli_real_escape_string($connect, $_POST["email"]);
-        $password = mysqli_real_escape_string($connect, $_POST["password"]);
-        $query = "SELECT * FROM login WHERE email = '$email'";
-        $result = mysqli_query($connect, $query);
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = mysqli_fetch_array($result)) {
-                $_SESSION["userId"] = $row["userId"];
-                $_SESSION["userType"] = $row["usertype"];
-                if (password_verify($password, $row["password"]) && $row["usertype"]=='4') {
-                    $_SESSION["email"] = $email;
-                    header("location:student.php");
-                } elseif (password_verify($password, $row["password"]) && $row["usertype"]=='3') {
-                    $_SESSION["email"] = $email;
-                    header("location:faculty.php");
-                } elseif (password_verify($password, $row["password"]) && $row["usertype"]=='2') {
-                    $_SESSION["email"] = $email;
-                    header("location:research.php");
-                } elseif (password_verify($password, $row["password"]) && $row["usertype"]=='1') {
-                    $_SESSION["email"] = $email;
-                    header("location:admin.php");
-                } else {
-                    echo '<script>alert("Wrong User Details")</script>';
-                }
-            }
-        } else {
-            echo '<script>alert("Wrong User Details")</script>';
-        }
-    }
-}
-?>
 <!DOCTYPE html>
 <html>
      <head>
@@ -78,19 +41,31 @@ if (isset($_POST["login"])) {
           <br /><br />
           <div class="container" style="width:500px;">
               <div class="jumbotron">
-               <h2 align="center">ERBUniveristy Login Page</h2>
+               <h2 align="center">Reset Password</h2>
                <br />
                <br />
                <form method="post">
                     <label>Enter Email:</label>
                     <input type="text" name="email" class="form-control" />
                     <br />
-                    <label>Enter Password:</label>
-                    <input type="password" name="password" class="form-control" />
-                    <br />
-                    <input type="submit" name="login" value="Login" class="btn btn-info" />
+                    <input type="submit" name="reset" value="Reset" class="btn btn-info" />
                     <br /> <br>
-                    <p>or <a href="resetPassword.php">Reset Password</a></p>
+                    <?php
+                    session_start();
+                    if (isset($_POST["reset"])) {
+                        if (empty($_POST["email"])) {
+                          echo '<script>alert("Enter your email")</script>';
+                        }
+                        else {
+                          $digits = 4;
+                          $num = rand(pow(10, $digits-1), pow(10, $digits)-1);
+                          $_SESSION["code"]=$num;
+                          $_SESSION["email"]=$_POST["email"];
+                          header("location:securityCode.php");
+                          }
+                        }
+
+                    ?>
                </form>
              </div>
           </div>
