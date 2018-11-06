@@ -65,14 +65,6 @@
                             $password = mysqli_real_escape_string($connect, $_POST["password"]);
                             $query = "SELECT * FROM login WHERE email = '$email'";
                             $result = mysqli_query($connect, $query);
-                            $ip = $_SERVER["REMOTE_ADDR"];
-                            mysqli_query($connect, "INSERT INTO `ip` (`address` ,`timestamp`)VALUES ('$ip',CURRENT_TIMESTAMP)");
-                            $result = mysqli_query($connect, "SELECT COUNT(*) FROM `ip` WHERE `address` LIKE '$ip' AND `timestamp` > (now() - interval 10 minute)");
-                            $count = mysqli_fetch_array($result, MYSQLI_NUM);
-                            if($count[0] > 3){
-                              echo "<h4 style='color:red;'>You are only allowed 3 incorrect attempts in 10 minutes!</h4> <br>";
-                              return;
-                            }
                             if (mysqli_num_rows($result) > 0) {
                                 while ($row = mysqli_fetch_array($result)) {
                                     $_SESSION["userId"] = $row["userId"];
@@ -96,6 +88,14 @@
                             } else {
                                 echo "Wrong User Details";
                             }
+                        }
+                        $ip = $_SERVER["REMOTE_ADDR"];
+                        mysqli_query($connect, "INSERT INTO `ip` (`address` ,`timestamp`)VALUES ('$ip',CURRENT_TIMESTAMP)");
+                        $result = mysqli_query($connect, "SELECT COUNT(*) FROM `ip` WHERE `address` LIKE '$ip' AND `timestamp` > (now() - interval 10 minute)");
+                        $count = mysqli_fetch_array($result, MYSQLI_NUM);
+                        if($count[0] > 3){
+                          echo "<h4 style='color:red;'>You are only allowed 3 incorrect attempts in 10 minutes!</h4> <br>";
+                          return;
                         }
                         echo "<h4 style='color:red;'>Incorrect Password!</h4>";
                     }
