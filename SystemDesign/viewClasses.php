@@ -32,6 +32,9 @@
               <li class="nav-item active">
                 <a class="nav-link" href="viewClasses.php">View Classes/Enroll in Class</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="viewHolds.php">View Holds</a>
+              </li>
             </ul>
             <form class="form-inline" action="logout.php">
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
@@ -187,12 +190,57 @@
                             $errorCheck2="SELECT * FROM enrollment WHERE stuId=$stuId";
                             $holdCheck="SELECT * FROM holds WHERE stuId=$stuId";
                             $timeslotCheck="SELECT * FROM enrollment INNER JOIN class ON class.crn = enrollment.crn WHERE enrollment.stuId='$stuId'";
+                            $preqCheck="SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE class.crn='$CRN'";
+                            $preqCheckResult=mysqli_query($connect,$preqCheck);
                             $checkResult=mysqli_query($connect, $check);
                             $timeslotCheckResult=mysqli_query($connect, $timeslotCheck);
                             $errorCheckResult=mysqli_query($connect, $errorCheck);
                             $errorCheck2Result=mysqli_query($connect, $errorCheck2);
                             $holdCheckResult=mysqli_query($connect, $holdCheck);
-                            if (mysqli_num_rows($errorCheckResult) > 0) {
+                            if (mysqli_num_rows($holdCheckResult)>0) {
+                                $row=mysqli_fetch_array($holdCheckResult);
+                                if ($row['holdType']==1) {
+                                    echo 'Financial Hold Placed on Account. Please Check Your Holds.';
+                                    return;
+                                } elseif ($row['holdType']==2) {
+                                    echo 'Academic Hold Placed on Account. Please Check Your Holds.';
+                                    return;
+                                } elseif ($row['holdType']==3) {
+                                    echo 'Diciplinary Hold Placed on Account. Please Check Your Holds.';
+                                    return;
+                                }
+                            }
+                            if(mysqli_num_rows($preqCheckResult)>0){
+                              $row=mysqli_fetch_array($preqCheckResult);
+                              if($row['prerequisite']>0){
+                                $counter=0;
+                                $courseName=$row['courseName'];
+                                $preqCheck2="SELECT * FROM prerequisite WHERE courseName=$courseName";
+                                $history="SELECT * FROM history WHERE stuId=$stuId";
+                                $historyResult=mysqli_query($connect,$history);
+                                $preqCheck2Result=mysqli_query($connect,$preqCheck2);
+                                $row2=mysqli_fetch_all($preqCheck2Result,MYSQLI_ASSOC);
+                                $row3=mysqli_fetch_all($historyResult,MYSQLI_ASSOC);
+                                foreach ($row2 as $item) {
+                                  foreach ($row3 as $item2) {
+                                    if($item['preqcourseName']==$item2['courseName']){
+                                      $counter++;
+                                    }
+                                  }
+                                }
+                              }
+                              else {
+                                return;
+                              }
+                              if($counter==$row['prerequisite']){
+
+                              }
+                              else{
+                                echo "You do not have the prerequisites for this class.";
+                                return;
+                              }
+                            }
+                            elseif (mysqli_num_rows($errorCheckResult) > 0) {
                                 echo "Already Enrolled in this class.";
                                 return;
                             } elseif (mysqli_num_rows($timeslotCheckResult) > 0) {
@@ -205,18 +253,6 @@
                                             return;
                                         }
                                     }
-                                }
-                            } elseif (mysqli_num_rows($holdCheckResult)>0) {
-                                $row=mysqli_fetch_array($holdCheckResult);
-                                if ($row['holdType']==1) {
-                                    echo 'Financial Hold Placed on Account. Please Check Your Holds.';
-                                    return;
-                                } elseif ($row['holdType']==2) {
-                                    echo 'Academic Hold Placed on Account. Please Check Your Holds.';
-                                    return;
-                                } elseif ($row['holdType']==3) {
-                                    echo 'Diciplinary Hold Placed on Account. Please Check Your Holds.';
-                                    return;
                                 }
                             } elseif (mysqli_num_rows($errorCheck2Result) > 3) {
                                 echo "Max Credits Reached.";

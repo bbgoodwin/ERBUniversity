@@ -26,13 +26,13 @@
               <li class="nav-item">
                 <a class="nav-link" href="unenroll.php">Unenroll</a>
               </li>
-              <li class="nav-item active">
+              <li class="nav-item">
                 <a class="nav-link" href="viewGrades.php">View Grades</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="viewClasses.php">View Classes/Enroll in Class</a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item active">
                 <a class="nav-link" href="viewHolds.php">View Holds</a>
               </li>
             </ul>
@@ -43,69 +43,30 @@
         </nav>
         <div class="container">
           <div class="jumbotron">
-                <h3>Your Grades</h3> <br>
-                <div>
-                <table class="table table-striped table-dark">
-                  <tr>
-                    <th scope="col">CRN#</th>
-                    <th scope="col">Course Name</th>
-                    <th scope="col">Semester</th>
-                    <th scope="col">Grade</th>
-                  </tr>
-                  <tbody>
+                <h3>Your Holds</h3> <br>
+                <div align="center">
                 <?php
                   $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
                   $stuId = $_SESSION["userId"];
-                  $query = "SELECT * FROM history WHERE stuId = '$stuId' ORDER BY semester DESC";
-                  $result = mysqli_query($connect, $query);
-                  $gpa=[];
-                  if (mysqli_num_rows($result) > 0) {
-                      while ($row = mysqli_fetch_array($result)) {
-                          echo "<tr><td>" . $row['crn'] . "</td><td>" . $row['courseName'] . "</td><td>" . $row['semester'] . "</td><td>" . $row['grade'] . "</td></tr>";
-                          if($row['grade']=='A'){
-                            array_push($gpa,4.0);
-                          }
-                          elseif($row['grade']=='A-'){
-                            array_push($gpa,3.67);
-                          }
-                          elseif($row['grade']=='B+'){
-                            array_push($gpa,3.33);
-                          }
-                          elseif($row['grade']=='B'){
-                            array_push($gpa,3.00);
-                          }
-                          elseif($row['grade']=='B-'){
-                            array_push($gpa,2.67);
-                          }
-                          elseif($row['grade']=='C+'){
-                            array_push($gpa,2.33);
-                          }
-                          elseif($row['grade']=='C'){
-                            array_push($gpa,2.00);
-                          }
-                          elseif($row['grade']=='D+'){
-                            array_push($gpa,1.33);
-                          }
-                          elseif($row['grade']=='D'){
-                            array_push($gpa,1.00);
-                          }
-                          elseif($row['grade']=='D-'){
-                            array_push($gpa,0.67);
-                          }
-                          elseif($row['grade']=='F'){
-                            array_push($gpa,0);
-                          }
+                  $query="SELECT * FROM holds WHERE stuId=$stuId";
+                  $queryResult=mysqli_query($connect,$query);
+                  if (mysqli_num_rows($queryResult)>0) {
+                      $row=mysqli_fetch_array($queryResult);
+                      if ($row['holdType']==1) {
+                          echo 'Financial Hold Placed on Account. Please Check Your Holds.';
+                          return;
+                      } elseif ($row['holdType']==2) {
+                          echo 'Academic Hold Placed on Account. Please Check Your Holds.';
+                          return;
+                      } elseif ($row['holdType']==3) {
+                          echo 'Diciplinary Hold Placed on Account. Please Check Your Holds.';
+                          return;
                       }
                   }
-                  if(count($gpa)){
-                    $gpa = array_filter($gpa);
-                    $gpaAvg = array_sum($gpa)/count($gpa);
-                    $gpaAvgF = number_format((float)$gpaAvg, 2, '.', '');
-                    echo "<h4> GPA: " . $gpaAvgF . "</h4>";
+                  else {
+                    echo 'You have no holds on your account.';
                   }
                 ?>
-              </tbody>
-            </table>
             </div>
          </div>
        </div>
