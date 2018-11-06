@@ -78,7 +78,7 @@
                               echo $_POST["code"];
                               echo $code;
                               if($userCode==$code){
-                                header("location:newPassword.php");
+                                include("logout.php");
                               }
                               else{
                                 echo "Incorrect Security Code";

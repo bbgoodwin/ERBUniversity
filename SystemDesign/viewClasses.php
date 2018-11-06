@@ -130,6 +130,9 @@
                               elseif($selectedTim!='ALL'){
                                 $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE timeslotid='$selectedTim'";
                               }
+                              else{
+                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName";
+                              }
 
                               $result=filterTable($query);
                           }
@@ -138,7 +141,7 @@
                               $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selected'";
                               $result=filterTable($query);
                           } else {
-                              $query = "SELECT * FROM class";
+                              $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName";
                               $result=filterTable($query);
                           }
                             $stuId = $_SESSION["userId"];
@@ -190,12 +193,21 @@
                             $errorCheck="SELECT * FROM enrollment WHERE crn=$CRN AND stuId=$stuId";
                             $errorCheck2="SELECT * FROM enrollment WHERE stuId=$stuId";
                             $holdCheck="SELECT * FROM holds WHERE stuId=$stuId";
+                            $timeslotCheck="SELECT * FROM class WHERE crn=$CRN";
+                            $timeslotCheckResult=mysqli_query($connect,$timeslotCheck);
                             $errorCheckResult=mysqli_query($connect,$errorCheck);
                             $errorCheck2Result=mysqli_query($connect,$errorCheck2);
                             $holdCheckResult=mysqli_query($connect,$holdCheck);
                             if(mysqli_num_rows($errorCheckResult) > 0){
                               echo "Already Enrolled in this class.";
                               return;
+                            }
+                            elseif(mysqli_num_rows($errorCheck2Result) > 0 && mysqli_num_rows($timeslotCheckResult) > 0){
+                              $row=mysqli_fetch_array($timeslotCheckResult);
+                              $crntimeslot=$
+                              $timeslot2check="SELECT * FROM class WHERE crn="
+                              $row2=mysqli_fetch_array($errorCheck2Result);
+                              if($row['timeslot']==$row2['timeslot'])
                             }
                             elseif(mysqli_num_rows($holdCheckResult)>0){
                               $row=mysqli_fetch_array($holdCheckResult);
