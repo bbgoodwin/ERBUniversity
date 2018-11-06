@@ -109,34 +109,26 @@
                               $selectedSem=$_POST['semester'];
                               $selectedDep=$_POST['department'];
                               $selectedTim=$_POST['timeslot'];
-                              if($selectedSem!='ALL' && $selectedDep!='ALL' && $selectedTim!='ALL'){
-                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND semeYear='$selectedSem' AND timeslotid='$selectedTim'";
-                              }
-                              elseif($selectedSem!='ALL' && $selectedDep!='ALL'){
-                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND semeYear='$selectedSem'";
-                              }
-                              elseif($selectedSem!='ALL' && $selectedTim!='ALL'){
-                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE semeYear='$selectedSem' AND timeslotid='$selectedTim'";
-                              }
-                              elseif($selectedDep!='ALL' && $selectedTim!='ALL'){
-                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND timeslotid='$selectedTim'";
-                              }
-                              elseif($selectedSem!='ALL'){
-                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE semeYear='$selectedSem'";
-                              }
-                              elseif($selectedDep!='ALL'){
-                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep'";
-                              }
-                              elseif($selectedTim!='ALL'){
-                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE timeslotid='$selectedTim'";
-                              }
-                              else{
-                                $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName";
+                              if ($selectedSem!='ALL' && $selectedDep!='ALL' && $selectedTim!='ALL') {
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND semeYear='$selectedSem' AND timeslotid='$selectedTim'";
+                              } elseif ($selectedSem!='ALL' && $selectedDep!='ALL') {
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND semeYear='$selectedSem'";
+                              } elseif ($selectedSem!='ALL' && $selectedTim!='ALL') {
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE semeYear='$selectedSem' AND timeslotid='$selectedTim'";
+                              } elseif ($selectedDep!='ALL' && $selectedTim!='ALL') {
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND timeslotid='$selectedTim'";
+                              } elseif ($selectedSem!='ALL') {
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE semeYear='$selectedSem'";
+                              } elseif ($selectedDep!='ALL') {
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep'";
+                              } elseif ($selectedTim!='ALL') {
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE timeslotid='$selectedTim'";
+                              } else {
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName";
                               }
 
                               $result=filterTable($query);
-                          }
-                          elseif (isset($_POST['searchD'])) {
+                          } elseif (isset($_POST['searchD'])) {
                               $selected=$_POST['department'];
                               $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selected'";
                               $result=filterTable($query);
@@ -190,49 +182,51 @@
                         if (isset($_POST["enroll"])) {
                             $stuId = $_SESSION["userId"];
                             $CRN = mysqli_real_escape_string($connect, $_POST["CRN#"]);
+                            $check="SELECT * FROM class WHERE crn=$CRN";
                             $errorCheck="SELECT * FROM enrollment WHERE crn=$CRN AND stuId=$stuId";
                             $errorCheck2="SELECT * FROM enrollment WHERE stuId=$stuId";
                             $holdCheck="SELECT * FROM holds WHERE stuId=$stuId";
-                            $timeslotCheck="SELECT * FROM class WHERE crn=$CRN";
-                            $timeslotCheckResult=mysqli_query($connect,$timeslotCheck);
-                            $errorCheckResult=mysqli_query($connect,$errorCheck);
-                            $errorCheck2Result=mysqli_query($connect,$errorCheck2);
-                            $holdCheckResult=mysqli_query($connect,$holdCheck);
-                            if(mysqli_num_rows($errorCheckResult) > 0){
-                              echo "Already Enrolled in this class.";
-                              return;
-                            }
-                            elseif(mysqli_num_rows($errorCheck2Result) > 0 && mysqli_num_rows($timeslotCheckResult) > 0){
-                              $row=mysqli_fetch_array($timeslotCheckResult);
-                              $crntimeslot=$
-                              $timeslot2check="SELECT * FROM class WHERE crn="
-                              $row2=mysqli_fetch_array($errorCheck2Result);
-                              if($row['timeslot']==$row2['timeslot'])
-                            }
-                            elseif(mysqli_num_rows($holdCheckResult)>0){
-                              $row=mysqli_fetch_array($holdCheckResult);
-                              if($row['holdType']==1){
-                                echo 'Financial Hold Placed on Account. Please Check Your Holds.';
+                            $timeslotCheck="SELECT * FROM enrollment INNER JOIN class ON class.crn = enrollment.crn WHERE enrollment.stuId='$stuId'";
+                            $checkResult=mysqli_query($connect, $check);
+                            $timeslotCheckResult=mysqli_query($connect, $timeslotCheck);
+                            $errorCheckResult=mysqli_query($connect, $errorCheck);
+                            $errorCheck2Result=mysqli_query($connect, $errorCheck2);
+                            $holdCheckResult=mysqli_query($connect, $holdCheck);
+                            if (mysqli_num_rows($errorCheckResult) > 0) {
+                                echo "Already Enrolled in this class.";
                                 return;
-                              }
-                              elseif($row['holdType']==2){
-                                echo 'Academic Hold Placed on Account. Please Check Your Holds.';
+                            } elseif (mysqli_num_rows($timeslotCheckResult) > 0) {
+                                if (mysqli_num_rows($checkResult) > 0) {
+                                    $row=mysqli_fetch_all($timeslotCheckResult, MYSQLI_ASSOC);
+                                    $row2=mysqli_fetch_array($checkResult);
+                                    foreach ($row as $item) {
+                                        if ($item['timeslotid']==$row2['timeslotid']) {
+                                            echo 'You are already registered for a class at this time.';
+                                            return;
+                                        }
+                                    }
+                                }
+                            } elseif (mysqli_num_rows($holdCheckResult)>0) {
+                                $row=mysqli_fetch_array($holdCheckResult);
+                                if ($row['holdType']==1) {
+                                    echo 'Financial Hold Placed on Account. Please Check Your Holds.';
+                                    return;
+                                } elseif ($row['holdType']==2) {
+                                    echo 'Academic Hold Placed on Account. Please Check Your Holds.';
+                                    return;
+                                } elseif ($row['holdType']==3) {
+                                    echo 'Diciplinary Hold Placed on Account. Please Check Your Holds.';
+                                    return;
+                                }
+                            } elseif (mysqli_num_rows($errorCheck2Result) > 3) {
+                                echo "Max Credits Reached.";
                                 return;
-                              }
-                              elseif($row['holdType']==3){
-                                echo 'Diciplinary Hold Placed on Account. Please Check Your Holds.';
-                                return;
-                              }
-                            }
-                            elseif(mysqli_num_rows($errorCheck2Result) > 3){
-                              echo "Max Credits Reached.";
-                              return;
                             }
                             $getSem = "SELECT * FROM class WHERE crn=$CRN";
                             $getSemResult = mysqli_query($connect, $getSem);
                             if (mysqli_num_rows($getSemResult) > 0) {
-                              $row = mysqli_fetch_array($getSemResult);
-                              $semester=$row['semeYear'];
+                                $row = mysqli_fetch_array($getSemResult);
+                                $semester=$row['semeYear'];
                             }
                             $query = "INSERT INTO enrollment(stuId,crn, semester)
                                   VALUES ('$stuId','$CRN','$semester');";
