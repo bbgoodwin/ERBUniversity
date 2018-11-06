@@ -243,7 +243,15 @@
                             elseif (mysqli_num_rows($errorCheckResult) > 0) {
                                 echo "Already Enrolled in this class.";
                                 return;
-                            } elseif (mysqli_num_rows($timeslotCheckResult) > 0) {
+                            }
+                            elseif (mysqli_num_rows($checkResult) > 0) {
+                              $row=mysqli_fetch_array($checkResult);
+                              if($row['seats']==0){
+                                echo 'There are no seats available for this class.';
+                                return;
+                              }
+                            }
+                            elseif (mysqli_num_rows($timeslotCheckResult) > 0) {
                                 if (mysqli_num_rows($checkResult) > 0) {
                                     $row=mysqli_fetch_all($timeslotCheckResult, MYSQLI_ASSOC);
                                     $row2=mysqli_fetch_array($checkResult);
