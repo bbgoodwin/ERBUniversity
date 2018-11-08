@@ -7,7 +7,7 @@
  <!DOCTYPE html>
  <html>
       <head>
-           <title>Grade Page</title>
+           <title>Holds Page</title>
            <link rel="stylesheet" href="general.css">
            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
            <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
@@ -48,9 +48,9 @@
                 <?php
                   $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
                   $stuId = $_SESSION["userId"];
-                  $query="SELECT * FROM holds WHERE stuId=$stuId";
+                  $query="SELECT * FROM studentholds INNER JOIN holds ON holds.holdId = studentholds.holdId WHERE stuId='$stuId'";
                   $queryResult=mysqli_query($connect,$query);
-                  if (mysqli_num_rows($queryResult)>0) {
+                  if (mysqli_num_rows($queryResult) > 0) {
                       $row=mysqli_fetch_array($queryResult);
                       if ($row['holdType']==1) {
                           echo 'Financial Hold Placed on Account. Please Check Your Holds.';

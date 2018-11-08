@@ -44,15 +44,17 @@
         <div class="row">
           <div class="col-2">
             <div class="jumbotron">
-              <p id=knowledge> Semester </p>
               <form class="form-inline" method="post">
-              <select name="semester">
+              <p id=knowledge> Semester <br> </p>
+              <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
+              <p><select name="semester">
                 <option value="ALL">ALL</option>
                 <option value="Spring 2019">Spring 2019</option>
-                <option value="Fall 2019">Fall 2019</option>
-              </select> <br /> <br />
+                <option value="Fall 2019">Fall 2019</option> <br>
+              </select> </p>  <br /> <br />
+              <p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;</p>
               <p id=knowledge> Time-Slot </p>
-              <select name="timeslot">
+              <p><select name="timeslot">
                 <option value="ALL">ALL</option>
                 <option value="1">MW 8:00am-9:50am</option>
                 <option value="2">MW 11:00am-12:50pm</option>
@@ -72,9 +74,9 @@
                 <option value="16">F 3:00pm-4:50pm</option>
                 <option value="17">F 5:00pm-6:50pm</option>
                 <option value="18">F 7:00pm-8:50pm</option>
-              </select> <br /> <br />
+              </select> </p>  <br /> <br />
               <p id=knowledge> Department </p>
-              <select name="department">
+              <p> <select name="department">
                 <option value="ALL">ALL</option>
                 <option value="CS">Computer Science</option>
                 <option value="Math">Math</option>
@@ -85,7 +87,8 @@
                 <option value="CHEM">Chemistry</option>
                 <option value="ART">Art</option>
                 <option value="PHY">Physics</option>
-              </select> <br> <br>
+              </select> </p>  <br> <br>
+              <p>&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
                 <input type="submit" name="search" value="Filter"></input>
               </form> <br> <br>
             </div>
@@ -190,8 +193,8 @@
                             $errorCheck2="SELECT * FROM enrollment WHERE stuId=$stuId";
                             $holdCheck="SELECT * FROM holds WHERE stuId=$stuId";
                             $timeslotCheck="SELECT * FROM enrollment INNER JOIN class ON class.crn = enrollment.crn WHERE enrollment.stuId='$stuId'";
-                            $preqCheck="SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE class.crn='$CRN'";
-                            $preqCheckResult=mysqli_query($connect,$preqCheck);
+                            $preqCheck="SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE class.crn='$CRN' AND course.prerequisite!='0'";
+                            $preqCheckResult=mysqli_query($connect, $preqCheck);
                             $checkResult=mysqli_query($connect, $check);
                             $timeslotCheckResult=mysqli_query($connect, $timeslotCheck);
                             $errorCheckResult=mysqli_query($connect, $errorCheck);
@@ -209,49 +212,36 @@
                                     echo 'Diciplinary Hold Placed on Account. Please Check Your Holds.';
                                     return;
                                 }
-                            }
-                            if(mysqli_num_rows($preqCheckResult)>0){
-                              $row=mysqli_fetch_array($preqCheckResult);
-                              if($row['prerequisite']>0){
-                                $counter=0;
-                                $courseName=$row['courseName'];
-                                $preqCheck2="SELECT * FROM prerequisite WHERE courseName=$courseName";
-                                $history="SELECT * FROM history WHERE stuId=$stuId";
-                                $historyResult=mysqli_query($connect,$history);
-                                $preqCheck2Result=mysqli_query($connect,$preqCheck2);
-                                $row2=mysqli_fetch_all($preqCheck2Result,MYSQLI_ASSOC);
-                                $row3=mysqli_fetch_all($historyResult,MYSQLI_ASSOC);
-                                foreach ($row2 as $item) {
-                                  foreach ($row3 as $item2) {
-                                    if($item['preqcourseName']==$item2['courseName']){
-                                      $counter++;
+                            } elseif (mysqli_num_rows($preqCheckResult)>0) {
+                                $row=mysqli_fetch_array($preqCheckResult);
+                                if ($row['prerequisite']>0) {
+                                    $counter=0;
+                                    $courseName=$row['courseName'];
+                                    $preqCheck2="SELECT * FROM prerequisite WHERE courseName=$courseName";
+                                    $history="SELECT * FROM history WHERE stuId=$stuId";
+                                    $historyResult=mysqli_query($connect, $history);
+                                    $preqCheck2Result=mysqli_query($connect, $preqCheck2);
+                                    $row2=mysqli_fetch_all($preqCheck2Result, MYSQLI_ASSOC);
+                                    $row3=mysqli_fetch_all($historyResult, MYSQLI_ASSOC);
+                                    foreach ($row2 as $item) {
+                                        foreach ($row3 as $item2) {
+                                            if ($item['preqcourseName']==$item2['courseName']) {
+                                                $counter++;
+                                            }
+                                        }
                                     }
-                                  }
+                                } else {
+                                    return;
                                 }
-                              }
-                              else {
-                                return;
-                              }
-                              if($counter==$row['prerequisite']){
-
-                              }
-                              else{
-                                echo "You do not have the prerequisites for this class.";
-                                return;
-                              }
-                            }
-                            elseif (mysqli_num_rows($errorCheckResult) > 0) {
+                                if ($counter==$row['prerequisite']) {
+                                } else {
+                                    echo "You do not have the prerequisites for this class.";
+                                    return;
+                                }
+                            } elseif (mysqli_num_rows($errorCheckResult) > 0) {
                                 echo "Already Enrolled in this class.";
                                 return;
-                            }
-                            elseif (mysqli_num_rows($checkResult) > 0) {
-                              $row=mysqli_fetch_array($checkResult);
-                              if($row['seats']==0){
-                                echo 'There are no seats available for this class.';
-                                return;
-                              }
-                            }
-                            elseif (mysqli_num_rows($timeslotCheckResult) > 0) {
+                            } elseif (mysqli_num_rows($timeslotCheckResult) > 0) {
                                 if (mysqli_num_rows($checkResult) > 0) {
                                     $row=mysqli_fetch_all($timeslotCheckResult, MYSQLI_ASSOC);
                                     $row2=mysqli_fetch_array($checkResult);
@@ -265,6 +255,14 @@
                             } elseif (mysqli_num_rows($errorCheck2Result) > 3) {
                                 echo "Max Credits Reached.";
                                 return;
+                            } elseif (mysqli_num_rows($checkResult) > 0) {
+                                $row=mysqli_fetch_array($checkResult);
+                                if ($row['seats']==0) {
+                                    echo 'There are no seats available for this class.';
+                                    return;
+                                }
+                            } else {
+                                echo 'Pass All';
                             }
                             $getSem = "SELECT * FROM class WHERE crn=$CRN";
                             $getSemResult = mysqli_query($connect, $getSem);
