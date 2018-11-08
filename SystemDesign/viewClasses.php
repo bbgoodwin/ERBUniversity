@@ -56,15 +56,15 @@
               <p id=knowledge> Time-Slot </p>
               <p><select name="timeslot">
                 <option value="ALL">ALL</option>
-                <option value="1">MW 8:00am-9:50am</option>
-                <option value="2">MW 11:00am-12:50pm</option>
-                <option value="3">MW 1:00pm-2:50pm</option>
-                <option value="4">MW 3:00pm-4:50pm</option>
-                <option value="5">MW 5:00pm-6:50pm</option>
-                <option value="6">MW 7:00pm-8:50pm</option>
-                <option value="7">TR 8:00am-9:50am</option>
-                <option value="8">TR 11:00am-12:50pm</option>
-                <option value="9">TR 1:00pm-2:50pm</option>
+                <option value="01">MW 8:00am-9:50am</option>
+                <option value="02">MW 11:00am-12:50pm</option>
+                <option value="03">MW 1:00pm-2:50pm</option>
+                <option value="04">MW 3:00pm-4:50pm</option>
+                <option value="05">MW 5:00pm-6:50pm</option>
+                <option value="06">MW 7:00pm-8:50pm</option>
+                <option value="07">TR 8:00am-9:50am</option>
+                <option value="08">TR 11:00am-12:50pm</option>
+                <option value="09">TR 1:00pm-2:50pm</option>
                 <option value="10">TR 3:00pm-4:50pm</option>
                 <option value="11">TR 5:00pm-6:50pm</option>
                 <option value="12">TR 7:00pm-8:50pm</option>
@@ -79,7 +79,7 @@
               <p> <select name="department">
                 <option value="ALL">ALL</option>
                 <option value="CS">Computer Science</option>
-                <option value="Math">Math</option>
+                <option value="MA">Math</option>
                 <option value="GYM">Fitness</option>
                 <option value="SCI">Science</option>
                 <option value="HIST">History</option>
@@ -212,7 +212,8 @@
                                     echo 'Diciplinary Hold Placed on Account. Please Check Your Holds.';
                                     return;
                                 }
-                            } elseif (mysqli_num_rows($preqCheckResult)>0) {
+                            }
+                            if (mysqli_num_rows($preqCheckResult)>0) {
                                 $row=mysqli_fetch_array($preqCheckResult);
                                 if ($row['prerequisite']>0) {
                                     $counter=0;
@@ -252,7 +253,8 @@
                                         }
                                     }
                                 }
-                            } elseif (mysqli_num_rows($errorCheck2Result) > 3) {
+                            }
+                            if (mysqli_num_rows($errorCheck2Result) > 3) {
                                 echo "Max Credits Reached.";
                                 return;
                             } elseif (mysqli_num_rows($checkResult) > 0) {
@@ -261,8 +263,6 @@
                                     echo 'There are no seats available for this class.';
                                     return;
                                 }
-                            } else {
-                                echo 'Pass All';
                             }
                             $getSem = "SELECT * FROM class WHERE crn=$CRN";
                             $getSemResult = mysqli_query($connect, $getSem);
