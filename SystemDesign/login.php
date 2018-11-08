@@ -80,7 +80,7 @@
                                         header("location:research.php");
                                     } elseif (password_verify($password, $row["password"]) && $row["usertype"]=='1') {
                                         $_SESSION["email"] = $email;
-                                        header("location:admin.php");
+                                        header("location:admin/admin.php");
                                     } else {
                                         echo 'Incorrect Password!';
                                     }
