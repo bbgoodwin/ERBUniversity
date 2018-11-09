@@ -35,6 +35,9 @@
               <li class="nav-item active">
                 <a class="nav-link" href="viewHolds.php">View Holds</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="degreeAudit.php">Degree Audit</a>
+              </li>
             </ul>
             <form class="form-inline" action="logout.php">
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
@@ -53,13 +56,13 @@
                   if (mysqli_num_rows($queryResult) > 0) {
                       $row=mysqli_fetch_array($queryResult);
                       if ($row['holdType']==1) {
-                          echo 'Financial Hold Placed on Account. Please Check Your Holds.';
+                          echo $row['holdDescription'];
                           return;
                       } elseif ($row['holdType']==2) {
-                          echo 'Academic Hold Placed on Account. Please Check Your Holds.';
+                          echo $row['holdDescription'];
                           return;
                       } elseif ($row['holdType']==3) {
-                          echo 'Diciplinary Hold Placed on Account. Please Check Your Holds.';
+                          echo $row['holdDescription'];
                           return;
                       }
                   }

@@ -7,7 +7,7 @@
  <!DOCTYPE html>
  <html>
       <head>
-           <title>Student Page</title>
+           <title>Degree Audit Page</title>
            <link rel="stylesheet" href="general.css">
            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
            <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
@@ -20,7 +20,7 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-              <li class="nav-item active">
+              <li class="nav-item">
                 <a class="nav-link" href="student.php">Student Homepage</a>
               </li>
               <li class="nav-item">
@@ -35,7 +35,7 @@
               <li class="nav-item">
                 <a class="nav-link" href="viewHolds.php">View Holds</a>
               </li>
-              <li class="nav-item">
+              <li class="nav-item active">
                 <a class="nav-link" href="degreeAudit.php">Degree Audit</a>
               </li>
             </ul>
@@ -46,49 +46,53 @@
         </nav>
         <div class="container">
           <div class="jumbotron">
-                <?php echo '<h1>Welcome '.$_SESSION["email"].'</h1><br>'; ?>
-                <h3>Student Detailed Schedule</h3> <br>
-                <div>
-                <table class="table table-striped table-dark">
-                  <tr>
-                    <th scope="col">CRN#</th>
-                    <th scope="col">Section</th>
-                    <th scope="col">Course Name</th>
-                    <th scope="col">Teacher</th>
-                    <th scope="col">Building</th>
-                    <th scope="col">Room#</th>
-                    <th scope="col">Time</th>
-                    <th scope="col">Semester</th>
-                  </tr>
-                  <tbody>
-                <?php
-                  $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
-                  $stuId = $_SESSION["userId"];
-                  $query = "SELECT * FROM enrollment WHERE stuId = '$stuId'";
-                  $result = mysqli_query($connect, $query);
-                  if (mysqli_num_rows($result) > 0) {
-                      while ($row = mysqli_fetch_array($result)) {
-                          $crn=$row['crn'];
-                          $query2="SELECT * FROM class WHERE crn=$crn";
-                          echo "<tr><td>" . $row['crn'] . "</td>";
-                          $result2=mysqli_query($connect, $query2);
-                          while ($row2 = mysqli_fetch_array($result2)) {
-                              $facultyid=$row2['facId'];
-                              $getFacName="SELECT * FROM user WHERE userId=$facultyid";
-                              $result4=mysqli_query($connect, $getFacName);
-                              $row4=mysqli_fetch_array($result4);
-                              $timeslotid=$row2['timeslotid'];
-                              $getTimeSlot="SELECT * FROM timeslot WHERE timeslotid=$timeslotid";
-                              $result3=mysqli_query($connect, $getTimeSlot);
-                              $row3 = mysqli_fetch_array($result3);
-                              echo "<td>" .  $row2['section'] . "</td><td>" . $row2['courseName'] . "</td><td>" . $row4['fname'] . " " . $row4['lname'] . "</td><td>" . $row2['buildingname'] . "</td><td>" . $row2['roomNumber'] . "</td><td>" . $row3['dayId'] . " " . $row3['periodId'] . "</td><td>" . $row2['semeYear'] . "</td></tr>";
-                          }
-                      }
-                  }
-                ?>
-              </tbody>
-            </table>
+            <div class="row">
+              <div class="col-sm">
+              Current Credits:
+              <?php
+              $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
+              $stuId = $_SESSION["userId"];
+              $query="SELECT numberOfCredits, deptCode FROM student WHERE stuId='$stuId'";
+              $queryResult=mysqli_query($connect, $query);
+              if(mysqli_num_rows($queryResult)>0){
+                $row=mysqli_fetch_array($queryResult);
+                $credits = $row['numberOfCredits'];
+                echo $credits;
+              }
+              ?>
             </div>
+            <div class="col-sm">
+              Total Credits Needed: 120
+            </div>
+            <div class="col-sm">
+              Credits Remaining: <?php echo (120-intval($credits)); ?>
+            </div>
+          </div> <br>
+          Major: <?php echo $row['deptCode']; ?>
+            <table class="table table-striped table-dark">
+              <tr>
+                <th scope="col">Course Name</th>
+                <th scope="col">Taken?</th>
+              </tr>
+              <tbody>
+            <?php
+            $getCourseHistory =  "SELECT courseName FROM history WHERE stuId='$stuId'";
+            $getCourseHistoryResult=mysqli_query($connect,$getCourseHistory);
+            if(mysqli_num_rows($getCourseHistoryResult)){
+                while ($row=mysqli_fetch_array($getCourseHistoryResult)) {
+                  echo "<tr><td>" . $row['courseName'] . "</td><td>&#10004;</td></tr>";
+                }
+            }
+            $getCoursesNotTaken = "SELECT courseName FROM majorcurriculum WHERE courseName NOT IN (SELECT courseName FROM history WHERE stuId='$stuId')";
+            $result = mysqli_query($connect,$getCoursesNotTaken);
+            if(mysqli_num_rows($result)){
+              while($row2=mysqli_fetch_array($result)){
+                echo "<tr><td>" . $row2['courseName'] . "</td><td></td></tr>";
+              }
+            }
+            ?>
+          </tbody>
+        </table>
          </div>
        </div>
       </body>

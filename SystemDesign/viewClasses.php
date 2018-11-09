@@ -35,6 +35,9 @@
               <li class="nav-item">
                 <a class="nav-link" href="viewHolds.php">View Holds</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="degreeAudit.php">Degree Audit</a>
+              </li>
             </ul>
             <form class="form-inline" action="logout.php">
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
@@ -274,7 +277,13 @@
                                   VALUES ('$stuId','$CRN','$semester');";
 
                             if (mysqli_query($connect, $query)) {
+                              $update = "UPDATE class WHERE crn=$crn SET seats = seats - 1";
+                              if(mysqli_query($connect, $update)){
                                 echo "Class Added to Schedule";
+                              }
+                              else{
+                                echo "Could Not Add Class";
+                              }
                             } else {
                                 echo "Incorrect CRN#";
                             }
