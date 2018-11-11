@@ -48,12 +48,18 @@
           <div class="col-2">
             <div class="jumbotron">
               <form class="form-inline" method="post">
-              <p id=knowledge> Semester <br> </p>
-              <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
+              <p id=knowledge> Semester </p>
+              <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
               <p><select name="semester">
                 <option value="ALL">ALL</option>
-                <option value="Spring 2019">Spring 2019</option>
-                <option value="Fall 2019">Fall 2019</option> <br>
+                <option value="fall 2018">Fall 2018</option>
+                <option value="spring 2018">Spring 2018</option>
+                <option value="summer 2018">Summer 2018</option>
+                <option value="winter 2018">Winter 2018</option>
+                <option value="spring 2019">Spring 2019</option>
+                <option value="fall 2019">Fall 2019</option>
+                <option value="summer 2019">Summer 2019</option>
+                <option value="winter 2019">Winter 2019</option> <br>
               </select> </p>  <br /> <br />
               <p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;</p>
               <p id=knowledge> Time-Slot </p>
@@ -83,13 +89,12 @@
                 <option value="ALL">ALL</option>
                 <option value="CS">Computer Science</option>
                 <option value="MA">Math</option>
-                <option value="GYM">Fitness</option>
-                <option value="SCI">Science</option>
-                <option value="HIST">History</option>
-                <option value="PSY">Pyschology</option>
-                <option value="CHEM">Chemistry</option>
-                <option value="ART">Art</option>
-                <option value="PHY">Physics</option>
+                <option value="BS">Biological Sciences</option>
+                <option value="CP">Chemistry and Physics</option>
+                <option value="HI">History</option>
+                <option value="PY">Pyschology</option>
+                <option value="EL">English</option>
+                <option value="VA">Visual Arts</option>
               </select> </p>  <br> <br>
               <p>&nbsp;&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
                 <input type="submit" name="search" value="Filter"></input>
@@ -99,18 +104,20 @@
           <div class="col-8">
             <div class="jumbotron">
                           <h3>Classes</h3> <br>
-                          <div>
                           <table class="table table-striped table-dark">
                             <tr>
-                              <th scope="col">CRN#</th>
-                              <th scope="col">Section</th>
-                              <th scope="col">Course Name</th>
-                              <th scope="col">Teacher</th>
-                              <th scope="col">Building</th>
-                              <th scope="col">Room#</th>
-                              <th scope="col">Time</th>
+                              <th width="75" scope="col">CRN#</th>
+                              <th width="85" scope="col">Section</th>
+                              <th width="253" scope="col">Course Name</th>
+                              <th width="115" scope="col">Teacher</th>
+                              <th width="160" scope="col">Building</th>
+                              <th width="60" scope="col">Room#</th>
+                              <th width="96" scope="col">Time</th>
                               <th scope="col">Semester</th>
                             </tr>
+                          </table>
+                          <div style="height:450px; overflow-y: scroll;">
+                          <table class="table table-striped table-dark">
                             <tbody>
                           <?php
                           $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
@@ -149,20 +156,20 @@
                             if (mysqli_num_rows($result) > 0) {
                                 while ($row = mysqli_fetch_array($result)) {
                                     $crn=$row['crn'];
-                                    $query2="SELECT * FROM class WHERE crn=$crn";
                                     echo "<tr><td>" . $row['crn'] . "</td>";
-                                    $result2=mysqli_query($connect, $query2);
-                                    while ($row2 = mysqli_fetch_array($result2)) {
-                                        $facultyid=$row2['facId'];
+                                        $facultyid=$row['facId'];
                                         $getFacName="SELECT * FROM user WHERE userId=$facultyid";
                                         $result4=mysqli_query($connect, $getFacName);
                                         $row4=mysqli_fetch_array($result4);
-                                        $timeslotid=$row2['timeslotid'];
+                                        $timeslotid=$row['timeslotid'];
                                         $getTimeSlot="SELECT * FROM timeslot WHERE timeslotid=$timeslotid";
                                         $result3=mysqli_query($connect, $getTimeSlot);
                                         $row3 = mysqli_fetch_array($result3);
-                                        echo "<td>" . $row2['section'] . "</td><td>" . $row2['courseName'] . "</td><td>" . $row4['fname'] . " " . $row4['lname'] . "</td><td>" . $row2['buildingname'] . "</td><td>" . $row2['roomNumber'] . "</td><td>" . $row3['dayId'] . " " . $row3['periodId'] . "</td><td>" . $row2['semeYear'] . "</td></tr>";
-                                    }
+                                        ?> <td width="85"> <?php
+                                        echo $row['section'] . "</td><td>" . $row['courseName'] . "</td><td>" . $row4['fname'] . " " . $row4['lname'] . "</td><td>" . $row['buildingname'] . "</td>";
+                                        ?> <td width="65"> <?php
+                                        echo $row['roomNumber'] . "</td><td>" . $row3['dayId'] . " " . $row3['periodId'] . "</td><td>" . $row['semeYear'] . "</td></tr>";
+
                                 }
                             }
                             function filterTable($query)
@@ -174,7 +181,7 @@
                           ?>
                         </tbody>
                       </table>
-                   </div>
+                   </div> <br>
                    <div align="center">
                    <form method="post" >
                      <h3>Enroll in Class</h3>
