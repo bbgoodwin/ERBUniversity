@@ -114,6 +114,7 @@
                               <th width="60" scope="col">Room#</th>
                               <th width="96" scope="col">Time</th>
                               <th scope="col">Semester</th>
+                              <th scope="col">Seats</th>
                             </tr>
                           </table>
                           <div style="height:450px; overflow-y: scroll;">
@@ -168,7 +169,7 @@
                                         ?> <td width="85"> <?php
                                         echo $row['section'] . "</td><td>" . $row['courseName'] . "</td><td>" . $row4['fname'] . " " . $row4['lname'] . "</td><td>" . $row['buildingname'] . "</td>";
                                         ?> <td width="65"> <?php
-                                        echo $row['roomNumber'] . "</td><td>" . $row3['dayId'] . " " . $row3['periodId'] . "</td><td>" . $row['semeYear'] . "</td></tr>";
+                                        echo $row['roomNumber'] . "</td><td>" . $row3['dayId'] . " " . $row3['periodId'] . "</td><td>" . $row['semeYear'] . "</td><td>" . $row['seats'] . "</td></tr>";
 
                                 }
                             }
@@ -198,8 +199,8 @@
                         if (isset($_POST["enroll"])) {
                             $stuId = $_SESSION["userId"];
                             $CRN = mysqli_real_escape_string($connect, $_POST["CRN#"]);
-                            $check="SELECT * FROM class WHERE crn=$CRN";
-                            $errorCheck="SELECT * FROM enrollment WHERE crn=$CRN AND stuId=$stuId";
+                            $check="SELECT timeslotid, seats FROM class WHERE crn='$CRN'";
+                            $errorCheck="SELECT * FROM enrollment WHERE crn='$CRN' AND stuId=$stuId";
                             $errorCheck2="SELECT * FROM enrollment WHERE stuId=$stuId";
                             $holdCheck="SELECT * FROM holds WHERE stuId=$stuId";
                             $timeslotCheck="SELECT * FROM enrollment INNER JOIN class ON class.crn = enrollment.crn WHERE enrollment.stuId='$stuId'";
@@ -267,31 +268,32 @@
                             if (mysqli_num_rows($errorCheck2Result) > 3) {
                                 echo "Max Credits Reached.";
                                 return;
-                            } elseif (mysqli_num_rows($checkResult) > 0) {
+                            }
+                            if (mysqli_num_rows($checkResult) > 0) {
                                 $row=mysqli_fetch_array($checkResult);
                                 if ($row['seats']==0) {
                                     echo 'There are no seats available for this class.';
                                     return;
                                 }
                             }
-                            $getSem = "SELECT * FROM class WHERE crn=$CRN";
+                            $getSem = "SELECT * FROM class WHERE crn='$CRN'";
                             $getSemResult = mysqli_query($connect, $getSem);
                             if (mysqli_num_rows($getSemResult) > 0) {
                                 $row = mysqli_fetch_array($getSemResult);
                                 $semester=$row['semeYear'];
                             }
                             $query = "INSERT INTO enrollment(stuId,crn, semester)
-                                  VALUES ('$stuId','$CRN','$semester');";
-
+                                  VALUES ('$stuId','$CRN','$semester')";
                             if (mysqli_query($connect, $query)) {
-                              $update = "UPDATE class WHERE crn=$crn SET seats = seats - 1";
+                              $update = "UPDATE class SET seats=seats-1 WHERE crn='$CRN'";
                               if(mysqli_query($connect, $update)){
                                 echo "Class Added to Schedule";
                               }
                               else{
                                 echo "Could Not Add Class";
                               }
-                            } else {
+                            }
+                            else {
                                 echo "Incorrect CRN#";
                             }
                         }

@@ -63,11 +63,13 @@ if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
                if (isset($_POST["unenroll"])) {
                    $CRN = mysqli_real_escape_string($connect, $_POST["CRN#"]);
                    $userid=$_SESSION["userId"];
-                   $check= "SELECT * FROM enrollment WHERE stuId=$userid AND crn=$CRN";
+                   $check= "SELECT * FROM enrollment WHERE stuId=$userid AND crn='$CRN'";
                    $result=mysqli_query($connect, $check);
-                   $query = "DELETE FROM enrollment WHERE stuId=$userid AND crn=$CRN";
+                   $query = "DELETE FROM enrollment WHERE stuId=$userid AND crn='$CRN'";
                    if (mysqli_num_rows($result) > 0) {
                        if (mysqli_query($connect, $query)) {
+                           $update = "UPDATE class SET seats=seats+1 WHERE crn='$CRN'";
+                           mysqli_query($connect, $update);
                            echo "Unenrollment successfull";
                        } else {
                            echo "Incorrect CRN#";
