@@ -64,12 +64,13 @@
                 <?php
                   $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
                   $stuId = $_SESSION["userId"];
-                  $query = "SELECT * FROM enrollment WHERE stuId = '$stuId'";
+                  $query = "SELECT * FROM enrollment WHERE stuId = '$stuId' ORDER BY semester ASC";
                   $result = mysqli_query($connect, $query);
                   if (mysqli_num_rows($result) > 0) {
                       while ($row = mysqli_fetch_array($result)) {
                           $crn=$row['crn'];
-                          $query2="SELECT * FROM class WHERE crn=$crn";
+                          $section=$row['section'];
+                          $query2="SELECT * FROM class WHERE crn='$crn' AND section='$section'";
                           echo "<tr><td>" . $row['crn'] . "</td>";
                           $result2=mysqli_query($connect, $query2);
                           while ($row2 = mysqli_fetch_array($result2)) {

@@ -190,6 +190,10 @@
                         <div style="width:100px;">
                         <input type="text" name="CRN#" class="form-control" />
                         </div>
+                        <label>Enter Section</label>
+                        <div style="width:100px;">
+                        <input type="text" name="section" class="form-control" />
+                        </div>
                         <br />
                         <input type="submit" name="enroll" value="Enroll" class="btn btn-info" />
                         <br /> <br>
@@ -199,8 +203,9 @@
                         if (isset($_POST["enroll"])) {
                             $stuId = $_SESSION["userId"];
                             $CRN = mysqli_real_escape_string($connect, $_POST["CRN#"]);
-                            $check="SELECT timeslotid, seats FROM class WHERE crn='$CRN'";
-                            $errorCheck="SELECT * FROM enrollment WHERE crn='$CRN' AND stuId=$stuId";
+                            $section=mysqli_real_escape_string($connect, $_POST["section"]);
+                            $check="SELECT timeslotid, seats FROM class WHERE crn=\'CS5278\' AND section=\'1\'";
+                            $errorCheck="SELECT * FROM enrollment WHERE crn='$CRN' AND stuId=$stuId AND section='$section'";
                             $errorCheck2="SELECT * FROM enrollment WHERE stuId=$stuId";
                             $holdCheck="SELECT * FROM holds WHERE stuId=$stuId";
                             $timeslotCheck="SELECT * FROM enrollment INNER JOIN class ON class.crn = enrollment.crn WHERE enrollment.stuId='$stuId'";
@@ -276,16 +281,16 @@
                                     return;
                                 }
                             }
-                            $getSem = "SELECT * FROM class WHERE crn='$CRN'";
+                            $getSem = "SELECT * FROM class WHERE crn='$CRN' AND section='$section'";
                             $getSemResult = mysqli_query($connect, $getSem);
                             if (mysqli_num_rows($getSemResult) > 0) {
                                 $row = mysqli_fetch_array($getSemResult);
                                 $semester=$row['semeYear'];
                             }
-                            $query = "INSERT INTO enrollment(stuId,crn, semester)
-                                  VALUES ('$stuId','$CRN','$semester')";
+                            $query = "INSERT INTO enrollment(stuId, crn, semester, section)
+                                  VALUES ('$stuId','$CRN','$semester','$section')";
                             if (mysqli_query($connect, $query)) {
-                              $update = "UPDATE class SET seats=seats-1 WHERE crn='$CRN'";
+                              $update = "UPDATE class SET seats=seats-1 WHERE crn='$CRN' AND section='$section'";
                               if(mysqli_query($connect, $update)){
                                 echo "Class Added to Schedule";
                               }

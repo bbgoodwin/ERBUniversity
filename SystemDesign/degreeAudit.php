@@ -76,7 +76,7 @@
               </tr>
               <tbody>
             <?php
-            $getCourseHistory =  "SELECT courseName FROM history WHERE stuId='$stuId'";
+            $getCourseHistory =  "SELECT * FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId' ORDER BY courseName ASC";
             $getCourseHistoryResult=mysqli_query($connect,$getCourseHistory);
             if(mysqli_num_rows($getCourseHistoryResult)){
                 while ($row=mysqli_fetch_array($getCourseHistoryResult)) {
