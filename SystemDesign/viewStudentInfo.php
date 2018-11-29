@@ -56,7 +56,7 @@
                 <?php
                 $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
                 $stuId = $_SESSION["userId"];
-                $query = "SELECT * FROM history ORDER BY semester DESC";
+                $query = "SELECT * FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section ORDER BY semester DESC";
                 $result = mysqli_query($connect, $query);
                 if(mysqli_num_rows($result)>0){
                     while($row=mysqli_fetch_array($result)){

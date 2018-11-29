@@ -69,25 +69,28 @@
             </div>
           </div> <br>
           Major: <?php echo $row['deptCode']; ?>
-            <table class="table table-striped table-dark">
-              <tr>
-                <th scope="col">Course Name</th>
-                <th scope="col">Taken?</th>
-              </tr>
+          <table class="table table-striped table-dark">
+            <tr>
+              <th width="50%" scope="col">Course Name</th>
+              <th width="50%" scope="col">Taken?</th>
+            </tr>
+          </table>
+              <div style="height:450px; overflow-y: scroll;">
+              <table class="table table-striped table-dark">
               <tbody>
             <?php
-            $getCourseHistory =  "SELECT * FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId' ORDER BY courseName ASC";
+            $getCourseHistory =  "SELECT DISTINCT class.courseName FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId' ORDER BY courseName ASC";
             $getCourseHistoryResult=mysqli_query($connect,$getCourseHistory);
             if(mysqli_num_rows($getCourseHistoryResult)){
                 while ($row=mysqli_fetch_array($getCourseHistoryResult)) {
-                  echo "<tr><td>" . $row['courseName'] . "</td><td>&#10004;</td></tr>";
+                  ?><tr> <td width="50%"><?php echo $row["courseName"] ?></td><td>&#10004;</td> <?php
                 }
             }
-            $getCoursesNotTaken = "SELECT courseName FROM majorcurriculum WHERE courseName NOT IN (SELECT courseName FROM history WHERE stuId='$stuId')";
+            $getCoursesNotTaken = "SELECT courseName FROM majorcurriculum WHERE courseName NOT IN (SELECT class.courseName FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId')";
             $result = mysqli_query($connect,$getCoursesNotTaken);
             if(mysqli_num_rows($result)){
               while($row2=mysqli_fetch_array($result)){
-                echo "<tr><td>" . $row2['courseName'] . "</td><td></td></tr>";
+                ?><tr> <td width="50%"><?php echo $row2["courseName"] ?></td><td></td> <?php
               }
             }
             ?>

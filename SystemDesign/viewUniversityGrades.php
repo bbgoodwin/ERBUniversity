@@ -40,65 +40,13 @@
         </nav>
         <div class="container">
           <div class="jumbotron">
-            <?php
-             echo '<h1>Welcome '.$_SESSION["email"].'</h1><br>'; ?>
+            <h1>University Grades</h1>
              <div class="container">
                <div class="row">
                  <div class="col-sm">
                    <?php
                    $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
-                   $resId = $_SESSION["userId"];
-                   $getSem="SELECT DISTINCT semester FROM history";
-                   $semResult=mysqli_query($connect,$getSem);
-                   $row2=mysqli_fetch_array($semResult);
-                   foreach ($row2 as $sem) {
-                       $gpaquery = "SELECT grade FROM history WHERE semester = '$sem'";
-                       $gpaResult=mysqli_query($connect,$gpaquery);
-                       $gpa=[];
-                       if(mysqli_num_rows($gpaResult) > 0){
-                         while($row3=mysqli_fetch_array($gpaResult)){
-                           if($row3['grade']=='A'){
-                             array_push($gpa,4.0);
-                           }
-                           elseif($row3['grade']=='A-'){
-                             array_push($gpa,3.67);
-                           }
-                           elseif($row3['grade']=='B+'){
-                             array_push($gpa,3.33);
-                           }
-                           elseif($row3['grade']=='B'){
-                             array_push($gpa,3.00);
-                           }
-                           elseif($row3['grade']=='B-'){
-                             array_push($gpa,2.67);
-                           }
-                           elseif($row3['grade']=='C+'){
-                             array_push($gpa,2.33);
-                           }
-                           elseif($row3['grade']=='C'){
-                             array_push($gpa,2.00);
-                           }
-                           elseif($row3['grade']=='D+'){
-                             array_push($gpa,1.33);
-                           }
-                           elseif($row3['grade']=='D'){
-                             array_push($gpa,1.00);
-                           }
-                           elseif($row3['grade']=='D-'){
-                             array_push($gpa,0.67);
-                           }
-                           elseif($row3['grade']=='F'){
-                             array_push($gpa,0);
-                           }
-                         }
-                       }
-                       if(count($gpa)){
-                         $gpa = array_filter($gpa);
-                         $gpaAvg = array_sum($gpa)/count($gpa);
-                         $gpaAvgF = number_format((float)$gpaAvg, 2, '.', '');
-                         echo "<h4>" . $sem . " GPA: " . $gpaAvgF . "</h4>";
-                       }
-                   } ?>
+                   $resId = $_SESSION["userId"];?>
                  </div>
                  <div class="col-sm">
 
@@ -112,6 +60,7 @@
               <tr>
                 <th width="25%" scope="col">Course Name</th>
                 <th width="25%" scope="col">CRN#</th>
+                <th width="25%" scope="col">Section</th>
                 <th width="25%" scope="col">Semester</th>
                 <th width="25%" scope="col">Grades</th>
               </tr>
@@ -120,20 +69,79 @@
             <table class="table table-striped table-dark">
               <tbody>
                 <?php
-                $query="SELECT courseName, grade, semester, crn FROM history";
+                $array=array();
+                $counter=0;
+                $query="SELECT * FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section ORDER BY semester DESC";
                 $result=mysqli_query($connect, $query);
                 if(mysqli_num_rows($result)>0){
                     while($row=mysqli_fetch_array($result)){
-                      ?><tr> <td width="25%"><?php echo $row["courseName"] ?></td> <?php
-                      ?> <td width="25%"><?php echo $row["crn"] ?></td> <?php
-                      ?> <td width="25%"><?php echo $row["semester"] ?></td> <?php
-                      ?> <td width="25%"><?php echo $row["grade"] ?></td></tr> <?php
+                      ?><tr> <td width="25%"><?php echo $row["courseName"]; ?></td> <?php
+                      ?> <td width="25%"><?php echo $row["crn"]; ?></td> <?php
+                      ?> <td width="25%"><?php echo $row["section"]; ?></td> <?php
+                      ?> <td width="25%"><?php echo $row["semester"]; $array[$counter]['semester']=$row["semester"];?></td> <?php
+                      ?> <td width="25%"><?php echo $row["grade"]; $array[$counter]['grade']=$row["grade"];?></td></tr> <?php
+                      $counter++;
                     }
                 }
+                echo "<br>";
                 ?>
               </tbody>
             </table>
          </div>
+         <?php
+         $query2 = "SELECT DISTINCT semester FROM history";
+         $result2 = mysqli_query($connect,$query2);
+          if(mysqli_num_rows($result2)>0){
+              while($row2 = mysqli_fetch_array($result2)){
+                $sem=$row2['semester'];
+                $gpaquery = "SELECT grade FROM history WHERE semester = '$sem'";
+                $gpaResult=mysqli_query($connect,$gpaquery);
+                $gpa=[];
+                if(mysqli_num_rows($gpaResult) > 0){
+                  while($row3=mysqli_fetch_array($gpaResult)){
+            if($row3['grade']=='A'){
+              array_push($gpa,4.0);
+            }
+            elseif($row3['grade']=='A-'){
+              array_push($gpa,3.67);
+            }
+            elseif($row3['grade']=='B+'){
+              array_push($gpa,3.33);
+            }
+            elseif($row3['grade']=='B'){
+              array_push($gpa,3.00);
+            }
+            elseif($row3['grade']=='B-'){
+              array_push($gpa,2.67);
+            }
+            elseif($row3['grade']=='C+'){
+              array_push($gpa,2.33);
+            }
+            elseif($row3['grade']=='C'){
+              array_push($gpa,2.00);
+            }
+            elseif($row3['grade']=='D+'){
+              array_push($gpa,1.33);
+            }
+            elseif($row3['grade']=='D'){
+              array_push($gpa,1.00);
+            }
+            elseif($row3['grade']=='D-'){
+              array_push($gpa,0.67);
+            }
+            elseif($row3['grade']=='F'){
+              array_push($gpa,0);
+            }
+          }
+        }
+        if(count($gpa)){
+          $gpa = array_filter($gpa);
+          $gpaAvg = array_sum($gpa)/count($gpa);
+          $gpaAvgF = number_format((float)$gpaAvg, 2, '.', '');
+          echo "<h4>" . $sem . " GPA: " . $gpaAvgF . "</h4>";
+        }
+      }
+    }?>
        </div>
       </body>
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
