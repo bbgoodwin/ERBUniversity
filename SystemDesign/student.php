@@ -38,6 +38,9 @@
               <li class="nav-item">
                 <a class="nav-link" href="degreeAudit.php">Degree Audit</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="declareMajorMinor.php">Declare Major/Minor</a>
+              </li>
             </ul>
             <form class="form-inline" action="logout.php">
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
@@ -51,15 +54,18 @@
                 <div>
                 <table class="table table-striped table-dark">
                   <tr>
-                    <th scope="col">CRN#</th>
-                    <th scope="col">Section</th>
-                    <th scope="col">Course Name</th>
-                    <th scope="col">Teacher</th>
-                    <th scope="col">Building</th>
-                    <th scope="col">Room#</th>
-                    <th scope="col">Time</th>
-                    <th scope="col">Semester</th>
+                    <th width="10%" scope="col">CRN#</th>
+                    <th width="10%" scope="col">Section</th>
+                    <th width="20%" scope="col">Course Name</th>
+                    <th width="20%" scope="col">Teacher</th>
+                    <th width="20%" scope="col">Building</th>
+                    <th width="10%" scope="col">Room#</th>
+                    <th width="10%" scope="col">Time</th>
+                    <th width="10%" scope="col">Semester</th>
                   </tr>
+                </table>
+                  <div style="height:450px; overflow-y: scroll;">
+                  <table class="table table-striped table-dark">
                   <tbody>
                 <?php
                   $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
@@ -71,7 +77,6 @@
                           $crn=$row['crn'];
                           $section=$row['section'];
                           $query2="SELECT * FROM class WHERE crn='$crn' AND section='$section'";
-                          echo "<tr><td>" . $row['crn'] . "</td>";
                           $result2=mysqli_query($connect, $query2);
                           while ($row2 = mysqli_fetch_array($result2)) {
                               $facultyid=$row2['facId'];
@@ -82,13 +87,21 @@
                               $getTimeSlot="SELECT * FROM timeslot WHERE timeslotid=$timeslotid";
                               $result3=mysqli_query($connect, $getTimeSlot);
                               $row3 = mysqli_fetch_array($result3);
-                              echo "<td>" .  $row2['section'] . "</td><td>" . $row2['courseName'] . "</td><td>" . $row4['fname'] . " " . $row4['lname'] . "</td><td>" . $row2['buildingname'] . "</td><td>" . $row2['roomNumber'] . "</td><td>" . $row3['dayId'] . " " . $row3['periodId'] . "</td><td>" . $row2['semeYear'] . "</td></tr>";
+                              ?><tr> <td width="10%"><?php echo $row["crn"]; ?></td> <?php
+                              ?> <td width="10%"><?php echo $row2["section"]; ?></td> <?php
+                              ?> <td width="20%"><?php echo $row2["courseName"]; ?></td> <?php
+                              ?> <td width="20%"><?php echo $row4["fname"] . " " . $row4["lname"]; ?></td> <?php
+                              ?> <td width="20%"><?php echo $row2["buildingname"]; ?></td> <?php
+                              ?> <td width="10%"><?php echo $row2["roomNumber"]; ?></td> <?php
+                              ?> <td width="10%"><?php echo $row3["dayId"] . " " . $row3['periodId']; ?></td> <?php
+                              ?> <td width="10%"><?php echo $row2["semeYear"]; ?></td></tr> <?php
                           }
                       }
                   }
                 ?>
               </tbody>
             </table>
+          </div>
             </div>
          </div>
        </div>

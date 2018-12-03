@@ -38,6 +38,9 @@
               <li class="nav-item">
                 <a class="nav-link" href="degreeAudit.php">Degree Audit</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="declareMajorMinor.php">Declare Major/Minor</a>
+              </li>
             </ul>
             <form class="form-inline" action="logout.php">
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
@@ -127,19 +130,19 @@
                               $selectedDep=$_POST['department'];
                               $selectedTim=$_POST['timeslot'];
                               if ($selectedSem!='ALL' && $selectedDep!='ALL' && $selectedTim!='ALL') {
-                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND semeYear='$selectedSem' AND timeslotid='$selectedTim'";
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND semeYear='$selectedSem' AND timeslotid='$selectedTim' ORDER BY semeYear DESC, class.courseName";
                               } elseif ($selectedSem!='ALL' && $selectedDep!='ALL') {
-                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND semeYear='$selectedSem'";
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND semeYear='$selectedSem' ORDER BY semeYear DESC, class.courseName";
                               } elseif ($selectedSem!='ALL' && $selectedTim!='ALL') {
-                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE semeYear='$selectedSem' AND timeslotid='$selectedTim'";
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE semeYear='$selectedSem' AND timeslotid='$selectedTim' ORDER BY semeYear DESC, class.courseName";
                               } elseif ($selectedDep!='ALL' && $selectedTim!='ALL') {
-                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND timeslotid='$selectedTim'";
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' AND timeslotid='$selectedTim' ORDER BY semeYear DESC, class.courseName";
                               } elseif ($selectedSem!='ALL') {
-                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE semeYear='$selectedSem'";
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE semeYear='$selectedSem' ORDER BY semeYear DESC, class.courseName";
                               } elseif ($selectedDep!='ALL') {
-                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep'";
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selectedDep' ORDER BY semeYear DESC, class.courseName";
                               } elseif ($selectedTim!='ALL') {
-                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE timeslotid='$selectedTim'";
+                                  $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE timeslotid='$selectedTim' ORDER BY semeYear DESC, class.courseName";
                               } else {
                                   $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName";
                               }
@@ -147,10 +150,10 @@
                               $result=filterTable($query);
                           } elseif (isset($_POST['searchD'])) {
                               $selected=$_POST['department'];
-                              $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selected'";
+                              $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE course.deptCode='$selected' ORDER BY semeYear DESC, class.courseName";
                               $result=filterTable($query);
                           } else {
-                              $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName";
+                              $query = "SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName ORDER BY semeYear DESC, class.courseName";
                               $result=filterTable($query);
                           }
                             $stuId = $_SESSION["userId"];
@@ -204,7 +207,7 @@
                             $stuId = $_SESSION["userId"];
                             $CRN = mysqli_real_escape_string($connect, $_POST["CRN#"]);
                             $section=mysqli_real_escape_string($connect, $_POST["section"]);
-                            $check="SELECT timeslotid, seats FROM class WHERE crn=\'CS5278\' AND section=\'1\'";
+                            $check="SELECT * FROM class WHERE crn=\'CS5278\' AND section=\'1\'";
                             $errorCheck="SELECT * FROM enrollment WHERE crn='$CRN' AND stuId=$stuId AND section='$section'";
                             $errorCheck2="SELECT * FROM enrollment WHERE stuId=$stuId";
                             $holdCheck="SELECT * FROM holds WHERE stuId=$stuId";

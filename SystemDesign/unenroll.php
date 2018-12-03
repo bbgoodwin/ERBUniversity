@@ -39,6 +39,9 @@ if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
              <li class="nav-item">
                <a class="nav-link" href="degreeAudit.phpp">Degree Audit</a>
              </li>
+             <li class="nav-item">
+               <a class="nav-link" href="declareMajorMinor.php">Declare Major/Minor</a>
+             </li>
            </ul>
            <form class="form-inline" action="logout.php">
              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>

@@ -38,6 +38,9 @@
               <li class="nav-item active">
                 <a class="nav-link" href="degreeAudit.php">Degree Audit</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" href="declareMajorMinor.php">Declare Major/Minor</a>
+              </li>
             </ul>
             <form class="form-inline" action="logout.php">
               <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
@@ -86,7 +89,11 @@
                   ?><tr> <td width="50%"><?php echo $row["courseName"] ?></td><td>&#10004;</td> <?php
                 }
             }
-            $getCoursesNotTaken = "SELECT courseName FROM majorcurriculum WHERE courseName NOT IN (SELECT class.courseName FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId')";
+            $major="SELECT majorcode FROM studentmajor WHERE stuId=$stuId";
+            $majorResult=mysqli_query($connect,$major);
+            $majorRow=mysqli_fetch_array($majorResult);
+            $majorcode=$majorRow["majorcode"];
+            $getCoursesNotTaken = "SELECT courseName FROM majorcurriculum WHERE majorcode='$majorcode' AND courseName NOT IN (SELECT class.courseName FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId')";
             $result = mysqli_query($connect,$getCoursesNotTaken);
             if(mysqli_num_rows($result)){
               while($row2=mysqli_fetch_array($result)){

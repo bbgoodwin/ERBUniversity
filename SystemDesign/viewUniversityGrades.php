@@ -7,7 +7,7 @@
  <!DOCTYPE html>
  <html>
       <head>
-           <title>Research Staff Page</title>
+           <title>University Grades Page</title>
            <link rel="stylesheet" href="general.css">
            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
            <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
@@ -27,10 +27,7 @@
                 <a class="nav-link" href="viewUniversityGrades.php">View University Grades</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="viewClassData.php">View Class Data</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="viewStudentInfo.php">View Student Information</a>
+                <a class="nav-link" href="viewMajor.php">View Major/Minor Info</a>
               </li>
             </ul>
             <form class="form-inline" action="logout.php">
@@ -58,11 +55,12 @@
              </div>
             <table class="table table-striped table-dark">
               <tr>
-                <th width="25%" scope="col">Course Name</th>
-                <th width="25%" scope="col">CRN#</th>
-                <th width="25%" scope="col">Section</th>
-                <th width="25%" scope="col">Semester</th>
-                <th width="25%" scope="col">Grades</th>
+                <th width="30%" scope="col">Course Name</th>
+                <th width="20%" scope="col">CRN#</th>
+                <th width="10%" scope="col">Section</th>
+                <th width="20%" scope="col">Semester</th>
+                <th width="10%" scope="col">Grades</th>
+                <th width="10%" scope="col">Seats</th>
               </tr>
             </table>
             <div style="height:450px; overflow-y: scroll;">
@@ -71,15 +69,16 @@
                 <?php
                 $array=array();
                 $counter=0;
-                $query="SELECT * FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section ORDER BY semester DESC";
+                $query="SELECT * FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section ORDER BY semester DESC, courseName";
                 $result=mysqli_query($connect, $query);
                 if(mysqli_num_rows($result)>0){
                     while($row=mysqli_fetch_array($result)){
-                      ?><tr> <td width="25%"><?php echo $row["courseName"]; ?></td> <?php
-                      ?> <td width="25%"><?php echo $row["crn"]; ?></td> <?php
-                      ?> <td width="25%"><?php echo $row["section"]; ?></td> <?php
-                      ?> <td width="25%"><?php echo $row["semester"]; $array[$counter]['semester']=$row["semester"];?></td> <?php
-                      ?> <td width="25%"><?php echo $row["grade"]; $array[$counter]['grade']=$row["grade"];?></td></tr> <?php
+                      ?><tr> <td width="30%"><?php echo $row["courseName"]; ?></td> <?php
+                      ?> <td width="20%"><?php echo $row["crn"]; ?></td> <?php
+                      ?> <td width="10%"><?php echo $row["section"]; ?></td> <?php
+                      ?> <td width="20%"><?php echo $row["semester"]; $array[$counter]['semester']=$row["semester"];?></td> <?php
+                      ?> <td width="10%"><?php echo $row["grade"]; $array[$counter]['grade']=$row["grade"];?></td> <?php
+                      ?> <td width="10%"><?php echo $row["seats"]; ?></td></tr> <?php
                       $counter++;
                     }
                 }
@@ -88,10 +87,13 @@
               </tbody>
             </table>
          </div>
+         <div class="row">
+           <div class="col-sm"> <br>
          <?php
          $query2 = "SELECT DISTINCT semester FROM history";
          $result2 = mysqli_query($connect,$query2);
           if(mysqli_num_rows($result2)>0){
+            echo "<h3> GPA Per Each Semester </h3>";
               while($row2 = mysqli_fetch_array($result2)){
                 $sem=$row2['semester'];
                 $gpaquery = "SELECT grade FROM history WHERE semester = '$sem'";
@@ -138,11 +140,41 @@
           $gpa = array_filter($gpa);
           $gpaAvg = array_sum($gpa)/count($gpa);
           $gpaAvgF = number_format((float)$gpaAvg, 2, '.', '');
-          echo "<h4>" . $sem . " GPA: " . $gpaAvgF . "</h4>";
+          echo "<h5>" . $sem . " | GPA: " . $gpaAvgF . "</h5>";
         }
       }
     }?>
+    </div>
+    <div class="col-sm"> <br>
+      <?php
+      $countClassQuery = "SELECT DISTINCT semester, COUNT(crn) AS 'num' FROM history GROUP BY semester";
+      $countResult=mysqli_query($connect,$countClassQuery);
+      if(mysqli_num_rows($countResult)>0){
+        echo "<h3> Total Class Population Per Semester </h3>";
+          foreach ($countResult as $a) {
+            echo "<h5>" . implode(" | Population: ",$a) . "</h5>";
+        }
+      }
+      ?>
+    </div>
+    <div class="col-sm"> <br>
+      <?php
+      $timeQuery = "SELECT DISTINCT timeslotid, COUNT(crn) AS 'count' FROM class GROUP BY timeslotid";
+      $timeResult=mysqli_query($connect,$timeQuery);
+      if(mysqli_num_rows($countResult)>0){
+        echo "<h3> Classes per Timeslot </h3>";
+          foreach ($timeResult as $b) {
+            $getTimeSlot="SELECT * FROM timeslot WHERE timeslotid=$b[timeslotid]";
+            $changeTime=mysqli_query($connect, $getTimeSlot);
+            $rows = mysqli_fetch_array($changeTime);
+            $b['timeslotid']=$rows['dayId'] . " " . $rows['periodId'];
+            echo "<h5>" . implode(" | Classes: ",$b) . "</h5>";
+        }
+      }
+      ?>
+    </div>
        </div>
+     </div>
       </body>
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>

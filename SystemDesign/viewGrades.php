@@ -60,7 +60,7 @@
                 <?php
                   $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
                   $stuId = $_SESSION["userId"];
-                  $query = "SELECT * FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId' ORDER BY semester DESC";
+                  $query = "SELECT * FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId' ORDER BY semester DESC, courseName";
                   $result = mysqli_query($connect, $query);
                   $gpa=[];
                   if (mysqli_num_rows($result) > 0) {

@@ -27,10 +27,7 @@
                 <a class="nav-link" href="viewUniversityGrades.php">View University Grades</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="viewClassData.php">View Class Data</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="viewStudentInfo.php">View Student Information</a>
+                <a class="nav-link" href="viewMajor.php">View Major/Minor Info</a>
               </li>
             </ul>
             <form class="form-inline" action="logout.php">
