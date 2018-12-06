@@ -58,15 +58,24 @@
                   $queryResult=mysqli_query($connect,$query);
                   if (mysqli_num_rows($queryResult) > 0) {
                       $row=mysqli_fetch_array($queryResult);
-                      if ($row['holdType']==1) {
+                      if ($row['holdtype']==1) {
                           echo $row['holdDescription'];
                           return;
-                      } elseif ($row['holdType']==2) {
+                      } elseif ($row['holdtype']==2) {
                           echo $row['holdDescription'];
                           return;
-                      } elseif ($row['holdType']==3) {
+                      } elseif ($row['holdtype']==3) {
                           echo $row['holdDescription'];
                           return;
+                      } elseif ($row['holdtype']==4) {
+                          echo $row['holdDescription'];
+                          return;
+                      } elseif ($row['holdtype']==5) {
+                          echo $row['holdDescription'];
+                          return;
+                      }
+                      else{
+                        echo 'You hve no holds on your account.';
                       }
                   }
                   else {

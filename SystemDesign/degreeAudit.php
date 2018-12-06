@@ -55,7 +55,9 @@
               <?php
               $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
               $stuId = $_SESSION["userId"];
-              $query="SELECT numberOfCredits, deptCode FROM student WHERE stuId='$stuId'";
+              $query="SELECT numberOfCredits FROM student WHERE stuId='$stuId'";
+              $major="SELECT major.majorname FROM studentmajor INNER JOIN major ON major.majorcode = studentmajor.majorcode WHERE stuId='$stuId'";
+              $majorResult=mysqli_query($connect,$major);
               $queryResult=mysqli_query($connect, $query);
               if(mysqli_num_rows($queryResult)>0){
                 $row=mysqli_fetch_array($queryResult);
@@ -71,7 +73,15 @@
               Credits Remaining: <?php echo (120-intval($credits)); ?>
             </div>
           </div> <br>
-          Major: <?php echo $row['deptCode']; ?>
+          <?php
+          if(mysqli_num_rows($majorResult)){
+            $majorRow=mysqli_fetch_array($majorResult);
+            echo "Major: " . $majorRow['majorname'];
+          }
+          else{
+            echo "No Major Declared";
+          }
+          ?>
           <table class="table table-striped table-dark">
             <tr>
               <th width="50%" scope="col">Course Name</th>

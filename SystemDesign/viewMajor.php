@@ -46,7 +46,7 @@
                      <div class="col-sm">
                        <h3>Student's Per Major</h3>
                        <?php
-                          $major="SELECT DISTINCT majorcode, COUNT(stuId) AS 'count' FROM studentmajor GROUP BY stuId";
+                          $major="SELECT DISTINCT major.majorname, COUNT(stuId) AS 'count' FROM studentmajor INNER JOIN major ON major.majorcode = studentmajor.majorcode GROUP BY major.majorname";
                           $majorResult=mysqli_query($connect,$major);
                           if(mysqli_num_rows($majorResult)>0){
                             foreach ($majorResult as $a) {
@@ -58,7 +58,7 @@
                      <div class="col-sm">
                        <h3>Student's Per Minor</h3>
                        <?php
-                          $minor="SELECT DISTINCT minorcode, COUNT(stuId) AS 'count' FROM studentminor GROUP BY stuId";
+                          $minor="SELECT DISTINCT minor.minorname, COUNT(stuId) AS 'count' FROM studentminor INNER JOIN minor ON minor.minorcode = studentminor.minorcode GROUP BY minor.minorname";
                           $minorResult=mysqli_query($connect,$minor);
                           if(mysqli_num_rows($minorResult)>0){
                             foreach ($minorResult as $a) {

@@ -52,6 +52,23 @@
                 <?php echo '<h1>Welcome '.$_SESSION["email"].'</h1><br>'; ?>
                 <h3>Student Detailed Schedule</h3> <br>
                 <div>
+                  <div class="row">
+                    <div class="col-sm">
+                      <form method="post">
+                      <select class="" name="semester">
+                        <option value="fall 2018">Fall 2018</option>
+                        <option value="winter 2018">Winter 2018</option>
+                      </select>
+                      <input type="submit" name="submit" value="Choose"></input>
+                      </form>
+                    </div>
+                    <div class="col-sm">
+
+                    </div>
+                    <div class="col-sm">
+
+                    </div>
+                  </div>
                 <table class="table table-striped table-dark">
                   <tr>
                     <th width="10%" scope="col">CRN#</th>
@@ -70,9 +87,41 @@
                 <?php
                   $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
                   $stuId = $_SESSION["userId"];
-                  $query = "SELECT * FROM enrollment WHERE stuId = '$stuId' ORDER BY semester ASC";
+                  $query = "SELECT * FROM enrollment WHERE stuId = '$stuId' AND semester = 'fall 2018'";
                   $result = mysqli_query($connect, $query);
-                  if (mysqli_num_rows($result) > 0) {
+                  if(isset($_POST['semester'])){
+                    $selectedSem=$_POST['semester'];
+                    $difSem = "SELECT * FROM enrollment WHERE stuId = '$stuId' AND semester = '$selectedSem'";
+                    $newResult = mysqli_query($connect, $difSem);
+                    if (mysqli_num_rows($newResult) > 0) {
+                      while ($row = mysqli_fetch_array($newResult)) {
+                          $crn=$row['crn'];
+                          $section=$row['section'];
+                          $query2="SELECT * FROM class WHERE crn='$crn' AND section='$section'";
+                          $result2=mysqli_query($connect, $query2);
+                          while ($row2 = mysqli_fetch_array($result2)) {
+                              $facultyid=$row2['facId'];
+                              $getFacName="SELECT * FROM user WHERE userId=$facultyid";
+                              $result4=mysqli_query($connect, $getFacName);
+                              $row4=mysqli_fetch_array($result4);
+                              $timeslotid=$row2['timeslotid'];
+                              $getTimeSlot="SELECT * FROM timeslot WHERE timeslotid=$timeslotid";
+                              $result3=mysqli_query($connect, $getTimeSlot);
+                              $row3 = mysqli_fetch_array($result3);
+                              ?><tr> <td width="10%"><?php echo $row["crn"]; ?></td> <?php
+                              ?> <td width="10%"><?php echo $row2["section"]; ?></td> <?php
+                              ?> <td width="20%"><?php echo $row2["courseName"]; ?></td> <?php
+                              ?> <td width="20%"><?php echo $row4["fname"] . " " . $row4["lname"]; ?></td> <?php
+                              ?> <td width="20%"><?php echo $row2["buildingname"]; ?></td> <?php
+                              ?> <td width="10%"><?php echo $row2["roomNumber"]; ?></td> <?php
+                              ?> <td width="10%"><?php echo $row3["dayId"] . " " . $row3['periodId']; ?></td> <?php
+                              ?> <td width="10%"><?php echo $row2["semeYear"]; ?></td></tr> <?php
+                          }
+                      }
+                  }
+                  }
+                  else{
+                    if (mysqli_num_rows($result) > 0) {
                       while ($row = mysqli_fetch_array($result)) {
                           $crn=$row['crn'];
                           $section=$row['section'];
@@ -98,6 +147,7 @@
                           }
                       }
                   }
+                }
                 ?>
               </tbody>
             </table>
