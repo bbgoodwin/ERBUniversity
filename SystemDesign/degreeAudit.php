@@ -57,7 +57,9 @@
               $stuId = $_SESSION["userId"];
               $query="SELECT numberOfCredits FROM student WHERE stuId='$stuId'";
               $major="SELECT major.majorname FROM studentmajor INNER JOIN major ON major.majorcode = studentmajor.majorcode WHERE stuId='$stuId'";
+              $minor="SELECT minor.minorname FROM studentminor INNER JOIN minor ON minor.minorcode = studentminor.minorcode WHERE stuId='$stuId'";
               $majorResult=mysqli_query($connect,$major);
+              $minorResult=mysqli_query($connect,$minor);
               $queryResult=mysqli_query($connect, $query);
               if(mysqli_num_rows($queryResult)>0){
                 $row=mysqli_fetch_array($queryResult);
@@ -73,15 +75,34 @@
               Credits Remaining: <?php echo (120-intval($credits)); ?>
             </div>
           </div> <br>
-          <?php
-          if(mysqli_num_rows($majorResult)){
-            $majorRow=mysqli_fetch_array($majorResult);
-            echo "Major: " . $majorRow['majorname'];
-          }
-          else{
-            echo "No Major Declared";
-          }
-          ?>
+          <div class="row">
+            <div class="col-sm">
+              <?php
+              if(mysqli_num_rows($majorResult)){
+                $majorRow=mysqli_fetch_array($majorResult);
+                echo "Major: " . $majorRow['majorname'];
+              }
+              else{
+                echo "No Major Declared";
+              }
+              ?>
+            </div>
+            <div class="col-sm">
+              <?php
+              if(mysqli_num_rows($minorResult)){
+                $minorRow=mysqli_fetch_array($minorResult);
+                echo "Minor: " . $minorRow['minorname'];
+              }
+              else{
+                echo "No Minor Declared";
+              }
+              ?>
+            </div>
+            <div class="col-sm">
+
+            </div>
+          </div>
+
           <table class="table table-striped table-dark">
             <tr>
               <th width="50%" scope="col">Course Name</th>
@@ -103,11 +124,22 @@
             $majorResult=mysqli_query($connect,$major);
             $majorRow=mysqli_fetch_array($majorResult);
             $majorcode=$majorRow["majorcode"];
-            $getCoursesNotTaken = "SELECT courseName FROM majorcurriculum WHERE majorcode='$majorcode' AND courseName NOT IN (SELECT class.courseName FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId')";
-            $result = mysqli_query($connect,$getCoursesNotTaken);
-            if(mysqli_num_rows($result)){
-              while($row2=mysqli_fetch_array($result)){
+            $minor="SELECT minorcode FROM studentminor WHERE stuId=$stuId";
+            $minorResult=mysqli_query($connect,$minor);
+            $minorRow=mysqli_fetch_array($minorResult);
+            $minorcode=$minorRow["minorcode"];
+            $getMajorCoursesNotTaken = "SELECT courseName FROM majorcurriculum WHERE majorcode='$majorcode' AND courseName NOT IN (SELECT class.courseName FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId')";
+            $getMinorCoursesNotTaken = "SELECT courseName FROM minorcurriculum WHERE minorcode='$minorcode' AND courseName NOT IN (SELECT class.courseName FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId')";
+            $result1 = mysqli_query($connect,$getMajorCoursesNotTaken);
+            $result2= mysqli_query($connect,$getMinorCoursesNotTaken);
+            if(mysqli_num_rows($result1)){
+              while($row2=mysqli_fetch_array($result1)){
                 ?><tr> <td width="50%"><?php echo $row2["courseName"] ?></td><td></td> <?php
+              }
+            }
+            if(mysqli_num_rows($result2)){
+              while($row3=mysqli_fetch_array($result2)){
+                ?><tr> <td width="50%"><?php echo $row3["courseName"] ?></td><td></td> <?php
               }
             }
             ?>

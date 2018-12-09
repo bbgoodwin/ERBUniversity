@@ -3,6 +3,8 @@
  if (!isset($_SESSION["email"]) || ($_SESSION["userType"]!=4)) {
      include("logout.php");
  }
+ $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
+ $stuId = $_SESSION["userId"];
  ?>
  <!DOCTYPE html>
  <html>
@@ -66,7 +68,23 @@
 
                     </div>
                     <div class="col-sm">
-
+                      <?php
+                        $advisor="SELECT facId FROM student INNER JOIN user ON user.userId = student.facId WHERE stuId='$stuId'";
+                        $advisorResult=mysqli_query($connect,$advisor);
+                        if(mysqli_num_rows($advisorResult) > 0){
+                          $row = mysqli_fetch_array($advisorResult);
+                          $advisorId = $row['facId'];
+                          $query = "SELECT * FROM user WHERE userId='$advisorId'";
+                          $result = mysqli_query($connect, $query);
+                          if(mysqli_num_rows($result) > 0){
+                            $row2=mysqli_fetch_array($result);
+                            echo "<h4>Your Advisor is " . $row2['fname'] . " " . $row2['lname'] . "</h4>";
+                          }
+                        }
+                        else{
+                          echo "<h4>Advisor Not Assigned.</h4>";
+                        }
+                       ?>
                     </div>
                   </div>
                 <table class="table table-striped table-dark">
@@ -85,8 +103,6 @@
                   <table class="table table-striped table-dark">
                   <tbody>
                 <?php
-                  $connect = mysqli_connect("localhost", "u224344528_rchiu", "ERBUniversity1", "u224344528_erbu");
-                  $stuId = $_SESSION["userId"];
                   $query = "SELECT * FROM enrollment WHERE stuId = '$stuId' AND semester = 'fall 2018'";
                   $result = mysqli_query($connect, $query);
                   if(isset($_POST['semester'])){

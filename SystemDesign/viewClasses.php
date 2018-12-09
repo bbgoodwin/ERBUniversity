@@ -56,13 +56,7 @@
               <p><select name="semester">
                 <option value="ALL">ALL</option>
                 <option value="fall 2018">Fall 2018</option>
-                <option value="spring 2018">Spring 2018</option>
-                <option value="summer 2018">Summer 2018</option>
-                <option value="winter 2018">Winter 2018</option>
-                <option value="spring 2019">Spring 2019</option>
-                <option value="fall 2019">Fall 2019</option>
-                <option value="summer 2019">Summer 2019</option>
-                <option value="winter 2019">Winter 2019</option> <br>
+                <option value="winter 2018">Winter 2018</option> <br>
               </select> </p>  <br /> <br />
               <p>&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;</p>
               <p id=knowledge> Time-Slot </p>
@@ -207,17 +201,15 @@
                             $stuId = $_SESSION["userId"];
                             $CRN = mysqli_real_escape_string($connect, $_POST["CRN#"]);
                             $section=mysqli_real_escape_string($connect, $_POST["section"]);
-                            $check="SELECT * FROM class WHERE crn=\'CS5278\' AND section=\'1\'";
+                            $check="SELECT * FROM class WHERE crn='$CRN' AND section=$section";
                             $errorCheck="SELECT * FROM enrollment WHERE crn='$CRN' AND stuId=$stuId AND section='$section'";
-                            $errorCheck2="SELECT * FROM enrollment WHERE stuId=$stuId";
                             $holdCheck="SELECT * FROM holds WHERE stuId=$stuId";
                             $timeslotCheck="SELECT * FROM enrollment INNER JOIN class ON class.crn = enrollment.crn WHERE enrollment.stuId='$stuId'";
-                            $preqCheck="SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE class.crn='$CRN' AND course.prerequisite!='0'";
+                            $preqCheck="SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE class.crn='$CRN' AND class.section='$section' AND course.prerequisite!='0'";
                             $preqCheckResult=mysqli_query($connect, $preqCheck);
                             $checkResult=mysqli_query($connect, $check);
                             $timeslotCheckResult=mysqli_query($connect, $timeslotCheck);
                             $errorCheckResult=mysqli_query($connect, $errorCheck);
-                            $errorCheck2Result=mysqli_query($connect, $errorCheck2);
                             $holdCheckResult=mysqli_query($connect, $holdCheck);
                             if (mysqli_num_rows($holdCheckResult)>0) {
                                 $row=mysqli_fetch_array($holdCheckResult);
@@ -237,15 +229,23 @@
                                 if ($row['prerequisite']>0) {
                                     $counter=0;
                                     $courseName=$row['courseName'];
-                                    $preqCheck2="SELECT * FROM prerequisite WHERE courseName=$courseName";
-                                    $history="SELECT * FROM history WHERE stuId=$stuId";
+                                    $preqCheck2="SELECT * FROM prerequisite WHERE courseName='$courseName'";
+                                    $history="SELECT * FROM history INNER JOIN class ON class.crn = history.crn WHERE stuId=$stuId";
+                                    $enrollment="SELECT courseName FROM enrollment WHERE stuId=$stuId";
+                                    $enrollmentResult=mysqli_query($connect, $enrollment);
                                     $historyResult=mysqli_query($connect, $history);
                                     $preqCheck2Result=mysqli_query($connect, $preqCheck2);
                                     $row2=mysqli_fetch_all($preqCheck2Result, MYSQLI_ASSOC);
                                     $row3=mysqli_fetch_all($historyResult, MYSQLI_ASSOC);
+                                    $row4=mysqli_fetch_all($enrollmentResult, MYSQLI_ASSOC);
                                     foreach ($row2 as $item) {
                                         foreach ($row3 as $item2) {
                                             if ($item['preqcourseName']==$item2['courseName']) {
+                                                $counter++;
+                                            }
+                                        }
+                                        foreach ($row4 as $item3) {
+                                            if ($item['preqcourseName']==$item3['courseName']) {
                                                 $counter++;
                                             }
                                         }
@@ -253,7 +253,7 @@
                                 } else {
                                     return;
                                 }
-                                if ($counter==$row['prerequisite']) {
+                                if ($counter>=$row['prerequisite']) {
                                 } else {
                                     echo "You do not have the prerequisites for this class.";
                                     return;
@@ -264,7 +264,7 @@
                             } elseif (mysqli_num_rows($timeslotCheckResult) > 0) {
                                 if (mysqli_num_rows($checkResult) > 0) {
                                     $row=mysqli_fetch_all($timeslotCheckResult, MYSQLI_ASSOC);
-                                    $row2=mysqli_fetch_array($checkResult);
+                                    $row2=mysqli_fetch_all($checkResult, MYSQLI_ASSOC);
                                     foreach ($row as $item) {
                                         if ($item['timeslotid']==$row2['timeslotid']) {
                                             echo 'You are already registered for a class at this time.';
@@ -273,23 +273,28 @@
                                     }
                                 }
                             }
-                            if (mysqli_num_rows($errorCheck2Result) > 3) {
-                                echo "Max Credits Reached.";
-                                return;
-                            }
-                            if (mysqli_num_rows($checkResult) > 0) {
-                                $row=mysqli_fetch_array($checkResult);
-                                if ($row['seats']==0) {
+                            $seatCheck="SELECT seats FROM class WHERE crn=\'$CRN\' AND section=$section";
+                            $seatCheckResult=mysqli_query($connect, $seatCheck);
+                            if (mysqli_num_rows($seatCheckResult) > 0) {
+                                $seats=mysqli_fetch_array($checkResult, MYSQLI_ASSOC);
+                                if ($seats['seats']==0) {
                                     echo 'There are no seats available for this class.';
                                     return;
                                 }
                             }
-                            $getSem = "SELECT * FROM class WHERE crn='$CRN' AND section='$section'";
+                            $getSem = "SELECT * FROM class WHERE crn=\'$CRN\' AND section='$section'";
                             $getSemResult = mysqli_query($connect, $getSem);
                             if (mysqli_num_rows($getSemResult) > 0) {
                                 $row = mysqli_fetch_array($getSemResult);
                                 $semester=$row['semeYear'];
+                                $errorCheck2="SELECT * FROM enrollment WHERE stuId=$stuId AND semester = '$semester'";
+                                $errorCheck2Result=mysqli_query($connect, $errorCheck2);
+                                if (mysqli_num_rows($errorCheck2Result) > 3) {
+                                  echo "Max Credits Reached.";
+                                  return;
+                                }
                             }
+
                             $query = "INSERT INTO enrollment(stuId, crn, semester, section)
                                   VALUES ('$stuId','$CRN','$semester','$section')";
                             if (mysqli_query($connect, $query)) {
