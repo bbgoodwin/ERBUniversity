@@ -261,7 +261,12 @@
                             } elseif (mysqli_num_rows($errorCheckResult) > 0) {
                                 echo "Already Enrolled in this class.";
                                 return;
-                            } elseif (mysqli_num_rows($timeslotCheckResult) > 0) {
+                            }
+                            $check = "SELECT * FROM class WHERE crn=\'$CRN\' AND section=1";
+                            echo $check;
+                            $checkResult = mysqli_query($connect, $check);
+                            if (mysqli_num_rows($timeslotCheckResult) > 0) {
+                              echo mysqli_num_rows($checkReult);
                                 if (mysqli_num_rows($checkResult) > 0) {
                                     $row=mysqli_fetch_all($timeslotCheckResult, MYSQLI_ASSOC);
                                     $row2=mysqli_fetch_all($checkResult, MYSQLI_ASSOC);
@@ -282,7 +287,7 @@
                                     return;
                                 }
                             }
-                            $getSem = "SELECT * FROM class WHERE crn=\'$CRN\' AND section='$section'";
+                            $getSem = "SELECT * FROM class WHERE crn='$CRN' AND section='$section'";
                             $getSemResult = mysqli_query($connect, $getSem);
                             if (mysqli_num_rows($getSemResult) > 0) {
                                 $row = mysqli_fetch_array($getSemResult);

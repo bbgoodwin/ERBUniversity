@@ -240,3 +240,47 @@ INSERT INTO `majorcurriculum` (`majorcode`, `courseName`) VALUES
 ('80001', 'Digital Imaging'),
 ('80001', 'Art Tutorials II'),
 ('80001', 'Art Tutorials III');
+
+--
+-- Dumping data for table `minorCurriculum`
+--
+
+-- CIS
+INSERT INTO `minorcurriculum`(`minorcode`, `courseName`) VALUES
+(10001,'Computer Programming I'),
+(10001,'Computer Programming II'),
+(10001,'Data Structures & Algorithms'),
+(10001,'Software Engineering'),
+(10001,'Data Mining');
+
+-- MATH
+INSERT INTO `minorcurriculum`(`minorcode`, `courseName`) VALUES
+(20001,'Calculus & Analytic Geometry I'),
+(20001,'Calculus & Analytic Geometry II'),
+(20001,'Discrete Mathematics'),
+(20001,'Linear Algebra'),
+(20001,'Number Theory'),
+(20001,'Calculus and Analytic Geometry III');
+
+-- HIS
+INSERT INTO `minorcurriculum`(`minorcode`, `courseName`) VALUES
+(30001,'Introduction to African-American Studies'),
+(30001,'African American History I'),
+(30001,'Social Movements'),
+(30001,'Literatures of Africa');
+
+-- VA
+INSERT INTO `minorcurriculum`(`minorcode`, `courseName`) VALUES
+(40003,'Basic Design'),
+(40003,'Drawing'),
+(40003,'Introduction to Color'),
+(40003,'Graphic Design I'),
+(40003,'Digital Animation');
+
+-- PY
+INSERT INTO `minorcurriculum`(`minorcode`, `courseName`) VALUES
+(50001,'Introduction to Psychology'),
+(50001,'Foundations of Child Development'),
+(50001,'Social Psychology'),
+(50001,'Cognitive Psychology'),
+(50001,'Psychology of Gender');
