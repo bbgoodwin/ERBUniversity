@@ -57,26 +57,8 @@
                   $query="SELECT * FROM studentholds INNER JOIN holds ON holds.holdId = studentholds.holdId WHERE stuId='$stuId'";
                   $queryResult=mysqli_query($connect,$query);
                   if (mysqli_num_rows($queryResult) > 0) {
-                      $row=mysqli_fetch_array($queryResult);
-                      if ($row['holdtype']==1) {
-                          echo $row['holdDescription'];
-                          return;
-                      } elseif ($row['holdtype']==2) {
-                          echo $row['holdDescription'];
-                          return;
-                      } elseif ($row['holdtype']==3) {
-                          echo $row['holdDescription'];
-                          return;
-                      } elseif ($row['holdtype']==4) {
-                          echo $row['holdDescription'];
-                          return;
-                      } elseif ($row['holdtype']==5) {
-                          echo $row['holdDescription'];
-                          return;
-                      }
-                      else{
-                        echo 'You hve no holds on your account.';
-                      }
+                    $row=mysqli_fetch_array($queryResult);
+                    echo "There is a hold on your account. <br>".$row['holdDescription'];
                   }
                   else {
                     echo 'You have no holds on your account.';

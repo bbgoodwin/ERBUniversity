@@ -203,26 +203,16 @@
                             $section=mysqli_real_escape_string($connect, $_POST["section"]);
                             $check="SELECT * FROM class WHERE crn='$CRN' AND section=$section";
                             $errorCheck="SELECT * FROM enrollment WHERE crn='$CRN' AND stuId=$stuId AND section='$section'";
-                            $holdCheck="SELECT * FROM holds WHERE stuId=$stuId";
-                            $timeslotCheck="SELECT * FROM enrollment INNER JOIN class ON class.crn = enrollment.crn WHERE enrollment.stuId='$stuId'";
+                            $holdCheck="SELECT * FROM studentholds WHERE stuId=$stuId";
                             $preqCheck="SELECT * FROM course INNER JOIN class ON class.courseName = course.courseName WHERE class.crn='$CRN' AND class.section='$section' AND course.prerequisite!='0'";
                             $preqCheckResult=mysqli_query($connect, $preqCheck);
                             $checkResult=mysqli_query($connect, $check);
-                            $timeslotCheckResult=mysqli_query($connect, $timeslotCheck);
                             $errorCheckResult=mysqli_query($connect, $errorCheck);
                             $holdCheckResult=mysqli_query($connect, $holdCheck);
                             if (mysqli_num_rows($holdCheckResult)>0) {
                                 $row=mysqli_fetch_array($holdCheckResult);
-                                if ($row['holdType']==1) {
-                                    echo 'Financial Hold Placed on Account. Please Check Your Holds.';
-                                    return;
-                                } elseif ($row['holdType']==2) {
-                                    echo 'Academic Hold Placed on Account. Please Check Your Holds.';
-                                    return;
-                                } elseif ($row['holdType']==3) {
-                                    echo 'Diciplinary Hold Placed on Account. Please Check Your Holds.';
-                                    return;
-                                }
+                                echo "There is a hold on your account.";
+                                return;
                             }
                             if (mysqli_num_rows($preqCheckResult)>0) {
                                 $row=mysqli_fetch_array($preqCheckResult);
@@ -262,31 +252,6 @@
                                 echo "Already Enrolled in this class.";
                                 return;
                             }
-                            $check = "SELECT * FROM class WHERE crn=\'$CRN\' AND section=1";
-                            echo $check;
-                            $checkResult = mysqli_query($connect, $check);
-                            if (mysqli_num_rows($timeslotCheckResult) > 0) {
-                              echo mysqli_num_rows($checkReult);
-                                if (mysqli_num_rows($checkResult) > 0) {
-                                    $row=mysqli_fetch_all($timeslotCheckResult, MYSQLI_ASSOC);
-                                    $row2=mysqli_fetch_all($checkResult, MYSQLI_ASSOC);
-                                    foreach ($row as $item) {
-                                        if ($item['timeslotid']==$row2['timeslotid']) {
-                                            echo 'You are already registered for a class at this time.';
-                                            return;
-                                        }
-                                    }
-                                }
-                            }
-                            $seatCheck="SELECT seats FROM class WHERE crn=\'$CRN\' AND section=$section";
-                            $seatCheckResult=mysqli_query($connect, $seatCheck);
-                            if (mysqli_num_rows($seatCheckResult) > 0) {
-                                $seats=mysqli_fetch_array($checkResult, MYSQLI_ASSOC);
-                                if ($seats['seats']==0) {
-                                    echo 'There are no seats available for this class.';
-                                    return;
-                                }
-                            }
                             $getSem = "SELECT * FROM class WHERE crn='$CRN' AND section='$section'";
                             $getSemResult = mysqli_query($connect, $getSem);
                             if (mysqli_num_rows($getSemResult) > 0) {
@@ -297,6 +262,22 @@
                                 if (mysqli_num_rows($errorCheck2Result) > 3) {
                                   echo "Max Credits Reached.";
                                   return;
+                                }
+                            }
+                            $timeslotCheck = "SELECT timeslotid FROM class INNER JOIN enrollment ON enrollment.crn = class.crn AND enrollment.section = class.section WHERE enrollment.stuId = 1 AND enrollment.semester = '$semester' AND timeslotid IN (SELECT timeslotid FROM class WHERE crn='$CRN' AND section=$section)";
+                            $timeslotCheckResult=mysqli_query($connect, $timeslotCheck);
+                            if (mysqli_num_rows($timeslotCheckResult) > 0) {
+                                echo "Already registered for a class at this time.";
+                                return;
+                            }
+
+                            $seatCheck="SELECT seats FROM class WHERE crn='$CRN' AND section=$section";
+                            $seatCheckResult=mysqli_query($connect, $seatCheck);
+                            if (mysqli_num_rows($seatCheckResult) > 0) {
+                                $seats=mysqli_fetch_array($checkResult, MYSQLI_ASSOC);
+                                if ($seats['seats']==0) {
+                                    echo 'There are no seats available for this class.';
+                                    return;
                                 }
                             }
 

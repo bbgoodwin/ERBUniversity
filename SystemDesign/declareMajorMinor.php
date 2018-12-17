@@ -137,6 +137,53 @@
                       }
                     }
                   ?>
+                  <h3>Declare Second Major</h3>
+                  <form class="form-inline" method="post" style="display: inline;">
+                  <p>
+                  <p id=knowledge> Major </p>
+                    <select name="Major">
+                      <option value=""></option>
+                      <?php
+                        $major="SELECT * FROM major";
+                        $majorResult=mysqli_query($connect,$major);
+                        while($row=mysqli_fetch_array($majorResult)){
+                          echo "<option value=\"" . $row['majorcode'] . "\"> " . $row['majorname'] . "</option>";
+                        }
+                       ?>
+                    </select>
+                  </p>
+                   <p>
+                     <input type="submit" name="declare2" value="Declare"></input>
+                   </p>
+                   </form>
+                   <?php
+                      if (isset($_POST['declare2'])) {
+                        $major=$_POST['Major'];
+
+                        $query="SELECT stuId FROM studentmajor WHERE stuId='$stuId'";
+                        $result=mysqli_query($connect,$query);
+                        $query2="SELECT stuId FROM studentminor WHERE stuId='$stuId'";
+                        $result2=mysqli_query($connect,$query2);
+                        if($major!=""){
+                          if(mysqli_num_rows($result) > 1){
+                            echo "You have already declared a second major. <br>";
+                            return;
+                          }
+                          elseif(mysqli_num_rows($result2) > 0){
+                            echo "You can only have either 2 majors or 1 major and 1 minor.";
+                          }
+                          else{
+                            $changeMajor="INSERT INTO studentmajor(majorcode,stuId) VALUES ('$major','$stuId')";
+                            if (mysqli_query($connect, $changeMajor)) {
+                              echo "Major Declared <br>";
+                            }
+                            else {
+                              echo "Major Not Declared <br>";
+                            }
+                          }
+                        }
+                      }
+                    ?>
                 </div>
          </div>
        </div>

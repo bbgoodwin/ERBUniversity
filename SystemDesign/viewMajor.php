@@ -77,9 +77,9 @@
                           $row=mysqli_fetch_array($gradResult);
                           $row2=mysqli_fetch_array($nonGradResult);
                           $totalStudents=$row['count'] + $row2['num'];
-                          echo "<h5> Graduates: ". $row['count'] . "</h5>";
-                          echo "<h5> Non-Graduates: ". $row2['num'] . "</h5>";
-                          echo "<h5> Total Students: ". $totalStudents . "</h5>";
+                          echo "<h5> Graduate Students: ". $row['count'] . "</h5>";
+                          echo "<h5> Undergraduate Students: ". $row2['num'] . "</h5>";
+                          echo "<h5> Total Amount Students: ". $totalStudents . "</h5>";
                         ?>
                      </div>
                    </div>

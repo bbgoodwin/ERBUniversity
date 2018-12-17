@@ -78,7 +78,15 @@
           <div class="row">
             <div class="col-sm">
               <?php
-              if(mysqli_num_rows($majorResult)){
+              if(mysqli_num_rows($majorResult)>1){
+                $majorRow=mysqli_fetch_all($majorResult);
+                $data = [];
+                foreach ($majorRow as $row) {
+                  $data[] = $row[0];
+                }
+                echo "Major: " . (string)$data[0] . ", " . (string)$data[1];
+              }
+              elseif(mysqli_num_rows($majorResult)>0){
                 $majorRow=mysqli_fetch_array($majorResult);
                 echo "Major: " . $majorRow['majorname'];
               }
@@ -122,11 +130,18 @@
             }
             $major="SELECT majorcode FROM studentmajor WHERE stuId=$stuId";
             $majorResult=mysqli_query($connect,$major);
-            $majorRow=mysqli_fetch_array($majorResult);
-            $majorcode=$majorRow["majorcode"];
+            $majorRow = mysqli_fetch_all($majorResult);
+            $data = [];
+            foreach ($majorRow as $row) {
+              $data[] = $row[0];
+            }
             $minor="SELECT minorcode FROM studentminor WHERE stuId=$stuId";
             $minorResult=mysqli_query($connect,$minor);
             $minorRow=mysqli_fetch_array($minorResult);
+            $majorcode=$data[0];
+            if(array_key_exists(1,$data)){
+              $majorcode2=$data[1];
+            }
             $minorcode=$minorRow["minorcode"];
             $getMajorCoursesNotTaken = "SELECT courseName FROM majorcurriculum WHERE majorcode='$majorcode' AND courseName NOT IN (SELECT class.courseName FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId')";
             $getMinorCoursesNotTaken = "SELECT courseName FROM minorcurriculum WHERE minorcode='$minorcode' AND courseName NOT IN (SELECT class.courseName FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId')";
@@ -142,6 +157,15 @@
                 ?><tr> <td width="50%"><?php echo $row3["courseName"] ?></td><td></td> <?php
               }
             }
+            if(array_key_exists(1,$data)){
+            $getMajorCoursesNotTaken = "SELECT courseName FROM majorcurriculum WHERE majorcode='$majorcode2' AND courseName NOT IN (SELECT class.courseName FROM history INNER JOIN class ON class.crn = history.crn AND class.section = history.section WHERE stuId='$stuId')";
+            $result3 = mysqli_query($connect,$getMajorCoursesNotTaken);
+            if(mysqli_num_rows($result3)){
+              while($row3=mysqli_fetch_array($result3)){
+                ?><tr> <td width="50%"><?php echo $row3["courseName"] ?></td><td></td> <?php
+              }
+            }
+          }
             ?>
           </tbody>
         </table>
